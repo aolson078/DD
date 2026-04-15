@@ -1,0 +1,393 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/_common.json",
+  "title": "SFS v1 Common Definitions",
+  "description": "Shared $defs referenced by every SFS function schema and by pack-v1.schema.json. Sourced verbatim from specs/02-domain-model.md and specs/03-effects-and-stack.md.",
+  "$defs": {
+    "SemVer": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    },
+    "Id": {
+      "description": "Kebab/snake identifier used for all pack-internal ids. Lowercase, starts with a letter, dot-segments allowed for namespacing.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "Tag": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "maxLength": 64
+    },
+    "DisplayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "EntityId": {
+      "description": "Session-unique u64 (represented as an integer here; hosts using languages without u64 are expected to widen).",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "EffectInstanceId": { "$ref": "#/$defs/EntityId" },
+    "PersistentEffectInstanceId": { "$ref": "#/$defs/EntityId" },
+    "EventId": { "$ref": "#/$defs/EntityId" },
+    "RequestId": { "$ref": "#/$defs/EntityId" },
+    "Sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "JsonValue": {
+      "description": "Opaque JSON value. Schemas that accept this MUST constrain further with named $defs when possible.",
+      "type": ["object", "array", "string", "number", "integer", "boolean", "null"]
+    },
+    "OrderedSet": {
+      "description": "An array with insertion order preserved and no duplicates. Canonical form orders lexicographically on serialize.",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "StatId": { "$ref": "#/$defs/Id" },
+    "ResourceId": { "$ref": "#/$defs/Id" },
+    "ProficiencyId": { "$ref": "#/$defs/Id" },
+    "DamageType": { "$ref": "#/$defs/Id" },
+    "ConditionId": { "$ref": "#/$defs/Id" },
+    "EffectTemplateId": { "$ref": "#/$defs/Id" },
+    "PersistentEffectTemplateId": { "$ref": "#/$defs/Id" },
+    "ActionId": { "$ref": "#/$defs/Id" },
+    "ActionKindId": { "$ref": "#/$defs/Id" },
+    "ItemTemplateId": { "$ref": "#/$defs/Id" },
+    "ItemInstanceId": { "$ref": "#/$defs/EntityId" },
+    "SpellId": { "$ref": "#/$defs/Id" },
+    "ClassId": { "$ref": "#/$defs/Id" },
+    "RaceId": { "$ref": "#/$defs/Id" },
+    "BackgroundId": { "$ref": "#/$defs/Id" },
+    "FeatId": { "$ref": "#/$defs/Id" },
+    "FeatureId": { "$ref": "#/$defs/Id" },
+    "MonsterId": { "$ref": "#/$defs/Id" },
+    "CheckId": { "$ref": "#/$defs/Id" },
+    "SaveId": { "$ref": "#/$defs/Id" },
+    "TriggerId": { "$ref": "#/$defs/Id" },
+    "TransformerId": { "$ref": "#/$defs/Id" },
+    "AbilityId": { "$ref": "#/$defs/Id" },
+    "AbilityScoreId": { "$ref": "#/$defs/Id" },
+    "RestId": { "$ref": "#/$defs/Id" },
+    "ClockTag": { "$ref": "#/$defs/Tag" },
+    "SlotId": { "$ref": "#/$defs/Id" },
+    "SceneId": { "$ref": "#/$defs/Id" },
+    "SceneTemplateId": { "$ref": "#/$defs/Id" },
+    "ZoneId": { "$ref": "#/$defs/Id" },
+    "RollTableId": { "$ref": "#/$defs/Id" },
+    "StepId": { "$ref": "#/$defs/Id" },
+    "BlueprintId": { "$ref": "#/$defs/Id" },
+    "FactionId": { "$ref": "#/$defs/Id" },
+    "ComponentTypeId": { "$ref": "#/$defs/Id" },
+    "DerivedStatId": { "$ref": "#/$defs/Id" },
+    "SfsFunctionId": {
+      "type": "string",
+      "pattern": "^(sfs|[a-z][a-z0-9_]*)\\.[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$",
+      "description": "Dotted sfs id. 'sfs.' prefix is reserved for the Standard Function Set; vendor-prefixed ids are permitted for pack-specific functions."
+    },
+    "DieKind": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["Dn"],
+          "additionalProperties": false,
+          "properties": {
+            "Dn": { "type": "integer", "minimum": 2, "maximum": 10000 }
+          }
+        },
+        {
+          "type": "string",
+          "enum": ["Fudge"]
+        },
+        {
+          "type": "object",
+          "required": ["Constant"],
+          "additionalProperties": false,
+          "properties": {
+            "Constant": { "type": "integer" }
+          }
+        }
+      ]
+    },
+    "KeepRule": {
+      "oneOf": [
+        { "type": "string", "enum": ["All"] },
+        { "type": "object", "required": ["KeepHighest"], "additionalProperties": false, "properties": { "KeepHighest": { "type": "integer", "minimum": 0 } } },
+        { "type": "object", "required": ["KeepLowest"], "additionalProperties": false, "properties": { "KeepLowest": { "type": "integer", "minimum": 0 } } },
+        { "type": "object", "required": ["DropHighest"], "additionalProperties": false, "properties": { "DropHighest": { "type": "integer", "minimum": 0 } } },
+        { "type": "object", "required": ["DropLowest"], "additionalProperties": false, "properties": { "DropLowest": { "type": "integer", "minimum": 0 } } }
+      ]
+    },
+    "DieGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "kind", "keep"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 0, "maximum": 1000 },
+        "kind": { "$ref": "#/$defs/DieKind" },
+        "keep": { "$ref": "#/$defs/KeepRule" }
+      }
+    },
+    "RollMode": {
+      "oneOf": [
+        { "type": "string", "enum": ["Straight", "Advantage", "Disadvantage", "ElvenAccuracy"] },
+        { "type": "object", "required": ["Custom"], "additionalProperties": false, "properties": { "Custom": { "$ref": "#/$defs/Tag" } } }
+      ]
+    },
+    "RollPurpose": {
+      "oneOf": [
+        { "type": "string", "enum": ["Attack", "InitiativeRoll", "HitDice"] },
+        { "type": "object", "required": ["Save"], "additionalProperties": false, "properties": { "Save": { "type": "object", "required": ["save_id"], "additionalProperties": false, "properties": { "save_id": { "$ref": "#/$defs/SaveId" } } } } },
+        { "type": "object", "required": ["Check"], "additionalProperties": false, "properties": { "Check": { "type": "object", "required": ["check_id"], "additionalProperties": false, "properties": { "check_id": { "$ref": "#/$defs/CheckId" } } } } },
+        { "type": "object", "required": ["Damage"], "additionalProperties": false, "properties": { "Damage": { "type": "object", "required": ["damage_type"], "additionalProperties": false, "properties": { "damage_type": { "$ref": "#/$defs/DamageType" } } } } },
+        { "type": "object", "required": ["Custom"], "additionalProperties": false, "properties": { "Custom": { "$ref": "#/$defs/Tag" } } }
+      ]
+    },
+    "ModifierSource": {
+      "oneOf": [
+        { "type": "object", "required": ["Stat"], "additionalProperties": false, "properties": { "Stat": { "$ref": "#/$defs/StatId" } } },
+        { "type": "string", "enum": ["Proficiency"] },
+        { "type": "object", "required": ["Feature"], "additionalProperties": false, "properties": { "Feature": { "$ref": "#/$defs/FeatureId" } } },
+        { "type": "object", "required": ["Item"], "additionalProperties": false, "properties": { "Item": { "$ref": "#/$defs/ItemInstanceId" } } },
+        { "type": "object", "required": ["Effect"], "additionalProperties": false, "properties": { "Effect": { "$ref": "#/$defs/EffectInstanceId" } } },
+        { "type": "object", "required": ["Circumstance"], "additionalProperties": false, "properties": { "Circumstance": { "$ref": "#/$defs/Tag" } } }
+      ]
+    },
+    "ModifierCondition": {
+      "oneOf": [
+        { "type": "string", "enum": ["Always"] },
+        { "type": "object", "required": ["Tagged"], "additionalProperties": false, "properties": { "Tagged": { "type": "array", "items": { "$ref": "#/$defs/Tag" } } } },
+        { "type": "object", "required": ["AgainstFaction"], "additionalProperties": false, "properties": { "AgainstFaction": { "$ref": "#/$defs/FactionId" } } },
+        { "type": "object", "required": ["Custom"], "additionalProperties": false, "properties": { "Custom": { "$ref": "#/$defs/Tag" } } }
+      ]
+    },
+    "Modifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "source", "applies_when"],
+      "properties": {
+        "value": { "type": "integer" },
+        "source": { "$ref": "#/$defs/ModifierSource" },
+        "applies_when": { "$ref": "#/$defs/ModifierCondition" }
+      }
+    },
+    "RollSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dice", "modifiers", "mode", "purpose"],
+      "properties": {
+        "dice": { "type": "array", "items": { "$ref": "#/$defs/DieGroup" } },
+        "modifiers": { "type": "array", "items": { "$ref": "#/$defs/Modifier" } },
+        "mode": { "$ref": "#/$defs/RollMode" },
+        "purpose": { "$ref": "#/$defs/RollPurpose" }
+      }
+    },
+    "DieRoll": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value", "dropped"],
+      "properties": {
+        "kind": { "$ref": "#/$defs/DieKind" },
+        "value": { "type": "integer" },
+        "dropped": { "type": "boolean" }
+      }
+    },
+    "RollResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["spec", "raw", "kept", "modifier_total", "total"],
+      "properties": {
+        "spec": { "$ref": "#/$defs/RollSpec" },
+        "raw": { "type": "array", "items": { "$ref": "#/$defs/DieRoll" } },
+        "kept": { "type": "array", "items": { "$ref": "#/$defs/DieRoll" } },
+        "modifier_total": { "type": "integer" },
+        "total": { "type": "integer" },
+        "natural": { "type": ["integer", "null"], "minimum": 0 }
+      }
+    },
+    "DamageTag": {
+      "type": "string",
+      "enum": ["magical", "silvered", "adamantine", "critical", "cold_iron", "force_push", "area", "ongoing"]
+    },
+    "DamageInstance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["amount", "type", "source", "tags", "original_amount"],
+      "properties": {
+        "amount": { "type": "integer" },
+        "type": { "$ref": "#/$defs/DamageType" },
+        "source": { "$ref": "#/$defs/EntityId" },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/DamageTag" } },
+        "original_amount": { "type": "integer" }
+      }
+    },
+    "ResourceCost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resource", "amount"],
+      "properties": {
+        "resource": { "$ref": "#/$defs/ResourceId" },
+        "amount": { "type": "integer", "minimum": 0 },
+        "from": { "$ref": "#/$defs/Id" }
+      }
+    },
+    "Duration": {
+      "oneOf": [
+        { "type": "object", "required": ["Rounds"], "additionalProperties": false, "properties": { "Rounds": { "type": "integer", "minimum": 0 } } },
+        { "type": "object", "required": ["Minutes"], "additionalProperties": false, "properties": { "Minutes": { "type": "integer", "minimum": 0 } } },
+        { "type": "object", "required": ["Hours"], "additionalProperties": false, "properties": { "Hours": { "type": "integer", "minimum": 0 } } },
+        { "type": "object", "required": ["Days"], "additionalProperties": false, "properties": { "Days": { "type": "integer", "minimum": 0 } } },
+        { "type": "string", "enum": ["UntilDispelled", "UntilExpiryPredicate"] },
+        { "type": "object", "required": ["UntilEndOfTurn"], "additionalProperties": false, "properties": { "UntilEndOfTurn": { "$ref": "#/$defs/EntityId" } } }
+      ]
+    },
+    "GridOffset": {
+      "type": "array",
+      "prefixItems": [{ "type": "integer" }, { "type": "integer" }],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "Direction": {
+      "type": "string",
+      "enum": ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "Up", "Down"]
+    },
+    "Position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scene_id", "zone_id"],
+      "properties": {
+        "scene_id": { "$ref": "#/$defs/SceneId" },
+        "zone_id": { "$ref": "#/$defs/ZoneId" },
+        "offset": { "oneOf": [{ "$ref": "#/$defs/GridOffset" }, { "type": "null" }] },
+        "facing": { "oneOf": [{ "$ref": "#/$defs/Direction" }, { "type": "null" }] }
+      }
+    },
+    "KnowledgeLevel": {
+      "type": "string",
+      "enum": ["Unknown", "Glimpsed", "Observed", "Identified"]
+    },
+    "FieldPath": {
+      "description": "Dot-path with numeric index for arrays, e.g. body.amounts.0.type. No wildcards.",
+      "type": "string",
+      "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*(\\.(([a-zA-Z_][a-zA-Z0-9_]*)|(0|[1-9][0-9]*)))*$",
+      "maxLength": 256
+    },
+    "JsonFilter": {
+      "description": "Minimal pattern language. Closed set of operators. Nesting depth <= 16 enforced at load (specs/03 Appendix A).",
+      "oneOf": [
+        { "type": "object", "required": ["Eq"], "additionalProperties": false, "properties": { "Eq": { "type": "object", "additionalProperties": false, "required": ["path", "value"], "properties": { "path": { "$ref": "#/$defs/FieldPath" }, "value": { "$ref": "#/$defs/JsonValue" } } } } },
+        { "type": "object", "required": ["In"], "additionalProperties": false, "properties": { "In": { "type": "object", "additionalProperties": false, "required": ["path", "set"], "properties": { "path": { "$ref": "#/$defs/FieldPath" }, "set": { "type": "array", "items": { "$ref": "#/$defs/JsonValue" } } } } } },
+        { "type": "object", "required": ["Lt"], "additionalProperties": false, "properties": { "Lt": { "type": "object", "additionalProperties": false, "required": ["path", "value"], "properties": { "path": { "$ref": "#/$defs/FieldPath" }, "value": { "type": "integer" } } } } },
+        { "type": "object", "required": ["Gt"], "additionalProperties": false, "properties": { "Gt": { "type": "object", "additionalProperties": false, "required": ["path", "value"], "properties": { "path": { "$ref": "#/$defs/FieldPath" }, "value": { "type": "integer" } } } } },
+        { "type": "object", "required": ["Has"], "additionalProperties": false, "properties": { "Has": { "type": "object", "additionalProperties": false, "required": ["path"], "properties": { "path": { "$ref": "#/$defs/FieldPath" } } } } },
+        { "type": "object", "required": ["Tagged"], "additionalProperties": false, "properties": { "Tagged": { "type": "object", "additionalProperties": false, "required": ["path", "tag"], "properties": { "path": { "$ref": "#/$defs/FieldPath" }, "tag": { "$ref": "#/$defs/Tag" } } } } },
+        { "type": "object", "required": ["And"], "additionalProperties": false, "properties": { "And": { "type": "object", "additionalProperties": false, "required": ["all"], "properties": { "all": { "type": "array", "items": { "$ref": "#/$defs/JsonFilter" } } } } } },
+        { "type": "object", "required": ["Or"], "additionalProperties": false, "properties": { "Or": { "type": "object", "additionalProperties": false, "required": ["any"], "properties": { "any": { "type": "array", "items": { "$ref": "#/$defs/JsonFilter" } } } } } },
+        { "type": "object", "required": ["Not"], "additionalProperties": false, "properties": { "Not": { "type": "object", "additionalProperties": false, "required": ["inner"], "properties": { "inner": { "$ref": "#/$defs/JsonFilter" } } } } }
+      ]
+    },
+    "Target": {
+      "oneOf": [
+        { "type": "string", "enum": ["Self"] },
+        { "type": "object", "required": ["Entity"], "additionalProperties": false, "properties": { "Entity": { "$ref": "#/$defs/EntityId" } } },
+        { "type": "object", "required": ["Zone"], "additionalProperties": false, "properties": { "Zone": { "$ref": "#/$defs/ZoneId" } } },
+        { "type": "object", "required": ["AllIn"], "additionalProperties": false, "properties": { "AllIn": { "type": "object", "additionalProperties": false, "required": ["zone", "filter"], "properties": { "zone": { "$ref": "#/$defs/ZoneId" }, "filter": { "$ref": "#/$defs/JsonFilter" } } } } },
+        { "type": "object", "required": ["Point"], "additionalProperties": false, "properties": { "Point": { "$ref": "#/$defs/GridOffset" } } }
+      ]
+    },
+    "ExpiryReason": {
+      "type": "string",
+      "enum": ["TimeElapsed", "Dispelled", "Concentration", "Replaced", "SceneExited", "ExplicitRemove", "Other"]
+    },
+    "ExpiryPredicate": {
+      "oneOf": [
+        { "type": "object", "required": ["TimeElapsed"], "additionalProperties": false, "properties": { "TimeElapsed": { "type": "object", "additionalProperties": false, "required": ["clock", "amount"], "properties": { "clock": { "$ref": "#/$defs/ClockTag" }, "amount": { "type": "integer", "minimum": 0 } } } } },
+        { "type": "object", "required": ["EventMatches"], "additionalProperties": false, "properties": { "EventMatches": { "type": "object", "additionalProperties": false, "required": ["kind", "filter"], "properties": { "kind": { "$ref": "#/$defs/Tag" }, "filter": { "$ref": "#/$defs/JsonFilter" } } } } },
+        { "type": "object", "required": ["Composite"], "additionalProperties": false, "properties": { "Composite": { "type": "object", "additionalProperties": false, "required": ["any"], "properties": { "any": { "type": "array", "items": { "$ref": "#/$defs/ExpiryPredicate" } } } } } }
+      ]
+    },
+    "ConcentrationBreakRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["break_on_damage", "break_on_incapacitate", "break_on_new_concentration"],
+      "properties": {
+        "break_on_damage": { "type": "boolean" },
+        "break_on_incapacitate": { "type": "boolean" },
+        "break_on_new_concentration": { "type": "boolean" },
+        "save": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "object", "required": ["save_id", "dc_formula"], "additionalProperties": false, "properties": {
+                "save_id": { "$ref": "#/$defs/SaveId" },
+                "dc_formula": { "type": "string", "description": "e.g. 'max(10, damage/2)' - interpreted by pack-defined SFS, never by the engine." }
+            } }
+          ]
+        }
+      }
+    },
+    "ConcentrationInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["concentrating_entity", "break_on"],
+      "properties": {
+        "concentrating_entity": { "$ref": "#/$defs/EntityId" },
+        "break_on": { "$ref": "#/$defs/ConcentrationBreakRule" }
+      }
+    },
+    "PersistentEffectInstance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "template_id", "source", "target", "applied_at", "duration", "expiry", "grants_triggers", "grants_transformers", "tags"],
+      "properties": {
+        "id": { "$ref": "#/$defs/PersistentEffectInstanceId" },
+        "template_id": { "$ref": "#/$defs/PersistentEffectTemplateId" },
+        "source": { "$ref": "#/$defs/EntityId" },
+        "target": {
+          "oneOf": [
+            { "type": "object", "required": ["Entity"], "additionalProperties": false, "properties": { "Entity": { "$ref": "#/$defs/EntityId" } } },
+            { "type": "object", "required": ["Scene"], "additionalProperties": false, "properties": { "Scene": { "$ref": "#/$defs/SceneId" } } }
+          ]
+        },
+        "applied_at": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "duration": { "$ref": "#/$defs/Duration" },
+        "expiry": { "$ref": "#/$defs/ExpiryPredicate" },
+        "grants_triggers": { "type": "array", "items": { "$ref": "#/$defs/TriggerId" } },
+        "grants_transformers": { "type": "array", "items": { "$ref": "#/$defs/TransformerId" } },
+        "concentration": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/ConcentrationInfo" }] },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/Tag" } }
+      }
+    },
+    "DieExpression": {
+      "description": "Compact dice notation used inside pack data (e.g. '2d6+3'). The engine expands to a RollSpec at resolve time.",
+      "type": "string",
+      "pattern": "^[0-9dk+\\-]+$",
+      "maxLength": 64
+    },
+    "DamageRoll": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expression", "type"],
+      "properties": {
+        "expression": { "$ref": "#/$defs/DieExpression" },
+        "type": { "$ref": "#/$defs/DamageType" },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/DamageTag" } }
+      }
+    },
+    "HealRoll": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expression"],
+      "properties": {
+        "expression": { "$ref": "#/$defs/DieExpression" }
+      }
+    }
+  }
+}
