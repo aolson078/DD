@@ -33,6 +33,1011 @@
     "tables",
     "derived_stat_rules"
   ],
-  "properties": {},
-  "$defs": {}
+  "properties": {
+    "manifest": { "$ref": "#/$defs/PackManifest" },
+    "stats": { "type": "array", "items": { "$ref": "#/$defs/StatDef" } },
+    "ability_scores": { "type": "array", "items": { "$ref": "#/$defs/AbilityScoreDef" } },
+    "resources": { "type": "array", "items": { "$ref": "#/$defs/ResourceDef" } },
+    "clocks": { "type": "array", "items": { "$ref": "#/$defs/ClockDef" } },
+    "rests": { "type": "array", "items": { "$ref": "#/$defs/RestDef" } },
+    "damage_types": { "type": "array", "items": { "$ref": "#/$defs/DamageTypeDef" } },
+    "conditions": { "type": "array", "items": { "$ref": "#/$defs/ConditionDef" } },
+    "items": { "type": "array", "items": { "$ref": "#/$defs/ItemTemplate" } },
+    "l10n": { "$ref": "#/$defs/L10n" },
+    "classes": { "type": "array", "items": { "$ref": "#/$defs/ClassDef" } },
+    "races": { "type": "array", "items": { "$ref": "#/$defs/RaceDef" } },
+    "backgrounds": { "type": "array", "items": { "$ref": "#/$defs/BackgroundDef" } },
+    "feats": { "type": "array", "items": { "$ref": "#/$defs/FeatDef" } },
+    "spells": { "type": "array", "items": { "$ref": "#/$defs/SpellDef" } },
+    "bestiary": { "type": "array", "items": { "$ref": "#/$defs/MonsterDef" } },
+    "actions": { "type": "array", "items": { "$ref": "#/$defs/ActionDef" } },
+    "checks": { "type": "array", "items": { "$ref": "#/$defs/CheckDef" } },
+    "saves": { "type": "array", "items": { "$ref": "#/$defs/SaveDef" } },
+    "triggers": { "type": "array", "items": { "$ref": "#/$defs/TriggerDef" } },
+    "transformers": { "type": "array", "items": { "$ref": "#/$defs/TransformerDef" } },
+    "effect_templates": { "type": "array", "items": { "$ref": "#/$defs/EffectTemplateDef" } },
+    "persistent_effect_templates": { "type": "array", "items": { "$ref": "#/$defs/PersistentEffectTemplateDef" } },
+    "progression": { "$ref": "#/$defs/ProgressionConfig" },
+    "derived_stat_rules": { "type": "array", "items": { "$ref": "#/$defs/DerivedStatRule" } },
+    "scenes": { "type": "array", "items": { "$ref": "#/$defs/SceneTemplate" } },
+    "tables": { "type": "array", "items": { "$ref": "#/$defs/RollTable" } }
+  },
+  "$defs": {
+    "PackManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "pack_schema_version",
+        "sfs_version",
+        "requires_sfs_functions",
+        "requires_component_types",
+        "requires_damage_types",
+        "display_name",
+        "description",
+        "authors",
+        "license",
+        "checksum",
+        "extends"
+      ],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/Id", "description": "PackId - kebab/dotted identifier." },
+        "version": { "$ref": "../sfs/v1/_common.json#/$defs/SemVer", "description": "Pack content version." },
+        "pack_schema_version": { "$ref": "../sfs/v1/_common.json#/$defs/SemVer", "description": "Must match engine.supported_schema_range. 1.0.0 for this spec." },
+        "sfs_version": { "$ref": "../sfs/v1/_common.json#/$defs/SemVer", "description": "SFS registry version the pack targets. Minor-version backcompat allowed." },
+        "requires_sfs_functions": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/SfsFunctionId" }, "uniqueItems": true },
+        "requires_component_types": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ComponentTypeId" }, "uniqueItems": true },
+        "requires_damage_types": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/DamageType" }, "uniqueItems": true },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "description": { "type": "string" },
+        "authors": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "license": { "type": "string", "minLength": 1 },
+        "origin": { "oneOf": [{ "type": "null" }, { "type": "string" }] },
+        "checksum": { "$ref": "../sfs/v1/_common.json#/$defs/Sha256", "description": "SHA-256 of canonical body sans manifest.checksum; verified at load." },
+        "extends": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/Id" }, "uniqueItems": true, "description": "Dependency PackIds; cycles are rejected at load." }
+      }
+    },
+
+    "StatDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/StatId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "abbrev": { "type": "string", "maxLength": 8 },
+        "default": { "type": "integer" },
+        "minimum": { "type": "integer" },
+        "maximum": { "type": "integer" },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "AbilityScoreDef": {
+      "description": "Proficiency bonus and score tables. The pack names what ability scores exist and how proficiency bonus scales with level.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "stat_id", "proficiency_bonus_table"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/AbilityScoreId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "stat_id": { "$ref": "../sfs/v1/_common.json#/$defs/StatId" },
+        "modifier_formula": {
+          "description": "How to derive the score's modifier. 'div2_floor_minus_5' is the canonical 5e-shaped form (floor(score/2) - 5). Packs may pick others from the closed set.",
+          "type": "string",
+          "enum": ["div2_floor_minus_5", "identity", "clamp_signed"]
+        },
+        "proficiency_bonus_table": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["level", "bonus"],
+            "properties": {
+              "level": { "type": "integer", "minimum": 1 },
+              "bonus": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+
+    "RecoveryAmount": {
+      "oneOf": [
+        { "type": "string", "enum": ["Full"] },
+        { "type": "object", "required": ["Flat"], "additionalProperties": false, "properties": { "Flat": { "type": "integer" } } },
+        {
+          "type": "object",
+          "required": ["Fraction"],
+          "additionalProperties": false,
+          "properties": {
+            "Fraction": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["numerator", "denominator"],
+              "properties": {
+                "numerator": { "type": "integer", "minimum": 0 },
+                "denominator": { "type": "integer", "minimum": 1 }
+              }
+            }
+          }
+        }
+      ]
+    },
+
+    "RecoveryRule": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["OnRest"],
+          "additionalProperties": false,
+          "properties": {
+            "OnRest": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["rest_kind", "amount"],
+              "properties": {
+                "rest_kind": { "$ref": "../sfs/v1/_common.json#/$defs/RestId" },
+                "amount": { "$ref": "#/$defs/RecoveryAmount" }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["OnClockTick"],
+          "additionalProperties": false,
+          "properties": {
+            "OnClockTick": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["clock", "amount"],
+              "properties": {
+                "clock": { "$ref": "../sfs/v1/_common.json#/$defs/ClockTag" },
+                "amount": { "$ref": "#/$defs/RecoveryAmount" }
+              }
+            }
+          }
+        },
+        { "type": "string", "enum": ["Manual"] }
+      ]
+    },
+
+    "ResourceTag": {
+      "oneOf": [
+        { "type": "string", "enum": ["PerEntity", "PerScene", "Hidden", "DisplayOnly"] },
+        { "type": "object", "required": ["BoundBelow"], "additionalProperties": false, "properties": { "BoundBelow": { "type": "integer" } } },
+        { "type": "object", "required": ["BoundAbove"], "additionalProperties": false, "properties": { "BoundAbove": { "type": "integer" } } }
+      ]
+    },
+
+    "ResourceDef": {
+      "description": "Shape of a ResourcePool template. Runtime pools are ResourcePool in 02-domain-model.md, and are instantiated from these definitions with per-entity max/current values.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "default_maximum", "recovery", "tags"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/ResourceId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "default_maximum": { "type": "integer" },
+        "default_current": { "type": "integer" },
+        "recovery": { "$ref": "#/$defs/RecoveryRule" },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/ResourceTag" } }
+      }
+    },
+
+    "ClockDef": {
+      "description": "Named time scale. Durations and recoveries reference these tags so content packs can redefine time.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "unit"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/ClockTag" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "unit": {
+          "description": "Conceptual unit for display. Not used by the engine for arithmetic - clocks are opaque u64 counters.",
+          "type": "string",
+          "enum": ["round", "second", "minute", "hour", "day", "week", "month", "year", "abstract"]
+        },
+        "ticks_per": {
+          "description": "Optional conversion hint: how many ticks of a smaller clock equal one tick of this clock. Engine does not auto-convert.",
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+
+    "RestTag": {
+      "type": "string",
+      "enum": ["short", "long", "heals", "recovers_slots", "recovers_hit_dice", "advances_day", "interruptible"]
+    },
+
+    "RestDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "duration", "tags"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/RestId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "duration": { "$ref": "../sfs/v1/_common.json#/$defs/Duration" },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/RestTag" } },
+        "pre_rest_triggers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TriggerId" } },
+        "post_rest_triggers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TriggerId" } }
+      }
+    },
+
+    "DamageTypeDef": {
+      "description": "A pack-defined damage type. Packs enumerate the damage types they use; effect bodies reference them by id.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/DamageType" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "category": {
+          "type": "string",
+          "enum": ["physical", "elemental", "magical", "psychic", "other"]
+        },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "ConditionDef": {
+      "description": "A named condition (Poisoned, Stunned, ...). Applied via sfs.condition.apply; encoded at runtime as a PersistentEffectInstance referencing the condition's template.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "persistent_effect_template"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/ConditionId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "description": { "type": "string" },
+        "persistent_effect_template": { "$ref": "../sfs/v1/_common.json#/$defs/PersistentEffectTemplateId" },
+        "stackable": { "type": "boolean", "description": "If false, reapplication refreshes duration; if true, instances accumulate." },
+        "exclusive_group": { "$ref": "../sfs/v1/_common.json#/$defs/Tag", "description": "Applying a condition with the same exclusive_group removes the existing one." },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "ItemTemplate": {
+      "description": "Template for items. Item instances in an entity's Inventory reference a template by id.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "category"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/ItemTemplateId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "description": { "type": "string" },
+        "category": {
+          "type": "string",
+          "enum": ["weapon", "armor", "shield", "consumable", "tool", "focus", "ammunition", "currency", "wondrous", "mundane"]
+        },
+        "weight": { "type": "integer", "minimum": 0 },
+        "value": { "type": "integer", "minimum": 0 },
+        "slot": { "$ref": "../sfs/v1/_common.json#/$defs/SlotId" },
+        "default_charges": { "$ref": "#/$defs/ResourceDef" },
+        "grants_actions": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ActionId" } },
+        "grants_triggers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TriggerId" } },
+        "grants_transformers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TransformerId" } },
+        "requires_attunement": { "type": "boolean" },
+        "requires_proficiency": { "$ref": "../sfs/v1/_common.json#/$defs/ProficiencyId" },
+        "damage": {
+          "description": "Weapon damage. Present iff category == 'weapon'.",
+          "type": "array",
+          "items": { "$ref": "../sfs/v1/_common.json#/$defs/DamageRoll" }
+        },
+        "armor_class_formula": {
+          "description": "For armor/shield. Expression string interpreted by pack-defined SFS, not the engine.",
+          "type": "string"
+        },
+        "range": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "normal": { "type": "integer", "minimum": 0 },
+            "long": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "L10n": {
+      "description": "Optional locale map. Outer key is a BCP-47-ish locale, inner key is a translation key (typically the id of a def), value is the translated string. Engines not implementing localization ignore this entirely.",
+      "type": "object",
+      "propertyNames": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": "string" }
+      }
+    },
+
+    "ClassFeature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "level"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/FeatureId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "description": { "type": "string" },
+        "level": { "type": "integer", "minimum": 1 },
+        "grants_actions": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ActionId" } },
+        "grants_triggers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TriggerId" } },
+        "grants_transformers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TransformerId" } },
+        "grants_resources": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ResourceId" } },
+        "grants_proficiencies": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ProficiencyId" } }
+      }
+    },
+
+    "LevelUpStepConfig": {
+      "description": "One step in the level-up flow for a class. The engine walks these in order, calling legal_choices_fn to build the PromptDecision and apply_fn to apply the result. See specs/08 Section 2.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "prompt_kind", "legal_choices_fn", "apply_fn"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/StepId" },
+        "prompt_kind": {
+          "type": "string",
+          "enum": ["ChooseSubclass", "ChooseASI", "ChooseSpells", "ChooseFeat", "ChooseSkill", "AutoApply", "ChooseHpMethod", "Custom"]
+        },
+        "legal_choices_fn": { "$ref": "../sfs/v1/_common.json#/$defs/SfsFunctionId" },
+        "apply_fn": { "$ref": "../sfs/v1/_common.json#/$defs/SfsFunctionId" },
+        "at_levels": {
+          "description": "If present, this step only applies at specific levels. If absent, applies at every level-up.",
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+
+    "ClassDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "hit_die", "features", "level_up_steps"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/ClassId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "description": { "type": "string" },
+        "hit_die": { "$ref": "../sfs/v1/_common.json#/$defs/DieKind" },
+        "primary_ability": { "$ref": "../sfs/v1/_common.json#/$defs/StatId" },
+        "saving_throw_proficiencies": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/StatId" } },
+        "armor_proficiencies": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ProficiencyId" } },
+        "weapon_proficiencies": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ProficiencyId" } },
+        "skill_choices": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "pick": { "type": "integer", "minimum": 0 },
+            "from": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ProficiencyId" } }
+          }
+        },
+        "starting_equipment": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ItemTemplateId" } },
+        "features": { "type": "array", "items": { "$ref": "#/$defs/ClassFeature" } },
+        "level_up_steps": { "type": "array", "items": { "$ref": "#/$defs/LevelUpStepConfig" } },
+        "spellcasting": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ability": { "$ref": "../sfs/v1/_common.json#/$defs/StatId" },
+            "slots_per_level": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["class_level", "slots"],
+                "properties": {
+                  "class_level": { "type": "integer", "minimum": 1 },
+                  "slots": { "type": "array", "items": { "type": "integer", "minimum": 0 } }
+                }
+              }
+            },
+            "cantrips_known": { "type": "array", "items": { "type": "integer", "minimum": 0 } },
+            "spells_known": { "type": "array", "items": { "type": "integer", "minimum": 0 } },
+            "ritual_casting": { "type": "boolean" },
+            "focus_type": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" }
+          }
+        },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "RacialTrait": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/FeatureId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "description": { "type": "string" },
+        "grants_actions": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ActionId" } },
+        "grants_triggers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TriggerId" } },
+        "grants_transformers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TransformerId" } },
+        "grants_proficiencies": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ProficiencyId" } },
+        "grants_resources": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ResourceId" } }
+      }
+    },
+
+    "RaceDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "traits"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/RaceId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "description": { "type": "string" },
+        "ability_score_increases": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "size": { "type": "string", "enum": ["Tiny", "Small", "Medium", "Large", "Huge", "Gargantuan"] },
+        "speed": { "type": "integer", "minimum": 0 },
+        "languages": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } },
+        "traits": { "type": "array", "items": { "$ref": "#/$defs/RacialTrait" } },
+        "subraces": { "type": "array", "items": { "$ref": "#/$defs/RaceDef" } },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "BackgroundDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/BackgroundId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "description": { "type": "string" },
+        "skill_proficiencies": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ProficiencyId" } },
+        "tool_proficiencies": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ProficiencyId" } },
+        "languages_choice": { "type": "integer", "minimum": 0 },
+        "starting_equipment": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ItemTemplateId" } },
+        "starting_gold": { "type": "integer", "minimum": 0 },
+        "feature": { "$ref": "#/$defs/ClassFeature" },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "FeatDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/FeatId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "description": { "type": "string" },
+        "prerequisites": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Prerequisite" }
+        },
+        "grants_actions": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ActionId" } },
+        "grants_triggers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TriggerId" } },
+        "grants_transformers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TransformerId" } },
+        "grants_proficiencies": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ProficiencyId" } },
+        "ability_score_increase": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "stat": { "$ref": "../sfs/v1/_common.json#/$defs/StatId" },
+            "amount": { "type": "integer" }
+          }
+        },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "Prerequisite": {
+      "description": "Closed enumeration of prerequisite kinds. Used by ActionDef and FeatDef. See specs/05 Section 7.2.",
+      "oneOf": [
+        { "type": "object", "required": ["HasResource"], "additionalProperties": false, "properties": { "HasResource": { "type": "object", "additionalProperties": false, "required": ["id", "amount"], "properties": { "id": { "$ref": "../sfs/v1/_common.json#/$defs/ResourceId" }, "amount": { "type": "integer", "minimum": 1 } } } } },
+        { "type": "object", "required": ["HasActionEconomy"], "additionalProperties": false, "properties": { "HasActionEconomy": { "type": "object", "additionalProperties": false, "required": ["kind"], "properties": { "kind": { "$ref": "#/$defs/ActionKind" } } } } },
+        { "type": "object", "required": ["Proficient"], "additionalProperties": false, "properties": { "Proficient": { "type": "object", "additionalProperties": false, "required": ["with"], "properties": { "with": { "$ref": "../sfs/v1/_common.json#/$defs/ProficiencyId" } } } } },
+        { "type": "object", "required": ["InRange"], "additionalProperties": false, "properties": { "InRange": { "type": "object", "additionalProperties": false, "required": ["max"], "properties": { "max": { "type": "integer", "minimum": 0 } } } } },
+        { "type": "string", "enum": ["InReach", "LineOfSight"] },
+        { "type": "object", "required": ["NotCondition"], "additionalProperties": false, "properties": { "NotCondition": { "type": "object", "additionalProperties": false, "required": ["id"], "properties": { "id": { "$ref": "../sfs/v1/_common.json#/$defs/ConditionId" } } } } },
+        { "type": "object", "required": ["HasEquipped"], "additionalProperties": false, "properties": { "HasEquipped": { "type": "object", "additionalProperties": false, "required": ["slot", "item_tag"], "properties": { "slot": { "$ref": "../sfs/v1/_common.json#/$defs/SlotId" }, "item_tag": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } } } } },
+        { "type": "object", "required": ["CustomSfs"], "additionalProperties": false, "properties": { "CustomSfs": { "type": "object", "additionalProperties": false, "required": ["function"], "properties": { "function": { "$ref": "../sfs/v1/_common.json#/$defs/SfsFunctionId" } } } } }
+      ]
+    },
+
+    "ActionKind": {
+      "type": "string",
+      "enum": ["Action", "BonusAction", "Reaction", "FreeAction", "Movement"]
+    },
+
+    "SpellDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "level", "school"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/SpellId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "description": { "type": "string" },
+        "level": { "type": "integer", "minimum": 0, "maximum": 9 },
+        "school": { "type": "string", "enum": ["abjuration", "conjuration", "divination", "enchantment", "evocation", "illusion", "necromancy", "transmutation"] },
+        "casting_time": { "$ref": "#/$defs/ActionKind" },
+        "range": {
+          "oneOf": [
+            { "type": "string", "enum": ["Self", "Touch"] },
+            { "type": "object", "required": ["Feet"], "additionalProperties": false, "properties": { "Feet": { "type": "integer", "minimum": 0 } } }
+          ]
+        },
+        "components": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "verbal": { "type": "boolean" },
+            "somatic": { "type": "boolean" },
+            "material": { "oneOf": [{ "type": "null" }, { "type": "string" }] },
+            "material_cost_gp": { "type": "integer", "minimum": 0 },
+            "consumed": { "type": "boolean" }
+          }
+        },
+        "duration": { "$ref": "../sfs/v1/_common.json#/$defs/Duration" },
+        "concentration": { "type": "boolean" },
+        "ritual": { "type": "boolean" },
+        "effects": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/EffectTemplateId" } },
+        "save": { "$ref": "../sfs/v1/_common.json#/$defs/SaveId" },
+        "attack_type": { "type": "string", "enum": ["melee", "ranged", "none"] },
+        "area": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shape": { "type": "string", "enum": ["sphere", "cube", "cone", "line", "cylinder"] },
+            "size": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "scaling": { "$ref": "#/$defs/ScalingSpec" },
+        "classes": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ClassId" } },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "ScalingSpec": {
+      "description": "Describes how an effect scales (e.g. per spell slot above base, per caster level, etc.).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "per_level_extra"],
+      "properties": {
+        "mode": { "type": "string", "enum": ["per_slot_above_base", "per_caster_level", "per_class_level", "none"] },
+        "base_level": { "type": "integer", "minimum": 0 },
+        "per_level_extra": {
+          "type": "array",
+          "items": { "$ref": "../sfs/v1/_common.json#/$defs/DamageRoll" }
+        }
+      }
+    },
+
+    "MonsterDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "stats", "hit_points", "armor_class"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/MonsterId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "description": { "type": "string" },
+        "size": { "type": "string", "enum": ["Tiny", "Small", "Medium", "Large", "Huge", "Gargantuan"] },
+        "type": { "type": "string" },
+        "alignment": { "type": "string" },
+        "stats": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "hit_points": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["average", "formula"],
+          "properties": {
+            "average": { "type": "integer", "minimum": 1 },
+            "formula": { "$ref": "../sfs/v1/_common.json#/$defs/DieExpression" }
+          }
+        },
+        "armor_class": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value"],
+          "properties": {
+            "value": { "type": "integer", "minimum": 0 },
+            "type": { "type": "string" }
+          }
+        },
+        "speed": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "saving_throw_bonuses": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "skills": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "damage_resistances": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/DamageType" } },
+        "damage_immunities": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/DamageType" } },
+        "damage_vulnerabilities": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/DamageType" } },
+        "condition_immunities": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ConditionId" } },
+        "senses": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "languages": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } },
+        "challenge_rating": { "type": "number", "minimum": 0 },
+        "xp": { "type": "integer", "minimum": 0 },
+        "actions": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ActionId" } },
+        "traits": { "type": "array", "items": { "$ref": "#/$defs/ClassFeature" } },
+        "legendary_actions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "count": { "type": "integer", "minimum": 0 },
+            "options": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ActionId" } }
+          }
+        },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "TargetingSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["Self", "SingleEntity", "MultiEntity", "Zone", "AllInZone", "Point", "Cone", "Line", "Sphere"] },
+        "count": { "type": "integer", "minimum": 0 },
+        "range": { "type": "integer", "minimum": 0 },
+        "filter": { "$ref": "../sfs/v1/_common.json#/$defs/JsonFilter" },
+        "must_be_hostile": { "type": "boolean" },
+        "must_be_friendly": { "type": "boolean" },
+        "area_size": { "type": "integer", "minimum": 0 }
+      }
+    },
+
+    "AdjudicationHint": {
+      "type": "string",
+      "enum": ["NeverAdjudicate", "AdjudicateOnAmbiguity", "AlwaysAdjudicate"]
+    },
+
+    "ActionDef": {
+      "description": "A declared action a character or monster may take. See specs/04 Section 6.1 and specs/05 Section 7.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "kind", "prerequisites", "cost", "targeting", "effects"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/ActionId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "description": { "type": "string" },
+        "kind": { "$ref": "#/$defs/ActionKind" },
+        "prerequisites": { "type": "array", "items": { "$ref": "#/$defs/Prerequisite" } },
+        "cost": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ResourceCost" } },
+        "targeting": { "$ref": "#/$defs/TargetingSpec" },
+        "effects": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/EffectTemplateId" } },
+        "adjudication": { "$ref": "#/$defs/AdjudicationHint" },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "CheckDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "ability"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/CheckId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "ability": { "$ref": "../sfs/v1/_common.json#/$defs/StatId" },
+        "proficiency": { "$ref": "../sfs/v1/_common.json#/$defs/ProficiencyId" },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "SaveDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "ability"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/SaveId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "ability": { "$ref": "../sfs/v1/_common.json#/$defs/StatId" },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "TriggerCondition": {
+      "description": "Closed union of trigger condition kinds. See specs/03 Section 4.",
+      "oneOf": [
+        { "type": "object", "required": ["OnEvent"], "additionalProperties": false, "properties": { "OnEvent": { "type": "object", "additionalProperties": false, "required": ["kind", "filter"], "properties": { "kind": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" }, "filter": { "$ref": "../sfs/v1/_common.json#/$defs/JsonFilter" } } } } },
+        { "type": "object", "required": ["OnEnterZone"], "additionalProperties": false, "properties": { "OnEnterZone": { "type": "object", "additionalProperties": false, "required": ["entity_filter", "zone"], "properties": { "entity_filter": { "$ref": "../sfs/v1/_common.json#/$defs/JsonFilter" }, "zone": { "$ref": "../sfs/v1/_common.json#/$defs/ZoneId" } } } } },
+        { "type": "object", "required": ["OnTurnStart"], "additionalProperties": false, "properties": { "OnTurnStart": { "type": "object", "additionalProperties": false, "required": ["for"], "properties": { "for": { "$ref": "../sfs/v1/_common.json#/$defs/JsonFilter" } } } } },
+        { "type": "object", "required": ["OnTurnEnd"], "additionalProperties": false, "properties": { "OnTurnEnd": { "type": "object", "additionalProperties": false, "required": ["for"], "properties": { "for": { "$ref": "../sfs/v1/_common.json#/$defs/JsonFilter" } } } } },
+        { "type": "object", "required": ["OnClockTick"], "additionalProperties": false, "properties": { "OnClockTick": { "type": "object", "additionalProperties": false, "required": ["clock", "modulo"], "properties": { "clock": { "$ref": "../sfs/v1/_common.json#/$defs/ClockTag" }, "modulo": { "type": "integer", "minimum": 0 } } } } },
+        { "type": "object", "required": ["OnDamaged"], "additionalProperties": false, "properties": { "OnDamaged": { "type": "object", "additionalProperties": false, "required": ["target", "damage_filter"], "properties": { "target": { "$ref": "../sfs/v1/_common.json#/$defs/JsonFilter" }, "damage_filter": { "$ref": "../sfs/v1/_common.json#/$defs/JsonFilter" } } } } },
+        { "type": "object", "required": ["OnSaveFailed"], "additionalProperties": false, "properties": { "OnSaveFailed": { "type": "object", "additionalProperties": false, "required": ["save"], "properties": { "save": { "$ref": "../sfs/v1/_common.json#/$defs/JsonFilter" } } } } },
+        { "type": "object", "required": ["OnActionDeclared"], "additionalProperties": false, "properties": { "OnActionDeclared": { "type": "object", "additionalProperties": false, "required": ["action_filter"], "properties": { "action_filter": { "$ref": "../sfs/v1/_common.json#/$defs/JsonFilter" } } } } },
+        { "type": "object", "required": ["Custom"], "additionalProperties": false, "properties": { "Custom": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } } }
+      ]
+    },
+
+    "TriggerDef": {
+      "description": "See specs/03 Section 4 and specs/04 Section 6.3.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "owner_scope", "on", "effect_template", "priority", "one_shot", "reaction"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/TriggerId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "owner_scope": { "type": "string", "enum": ["Entity", "Scene"] },
+        "on": { "$ref": "#/$defs/TriggerCondition" },
+        "effect_template": { "$ref": "../sfs/v1/_common.json#/$defs/EffectTemplateId" },
+        "cost": { "$ref": "../sfs/v1/_common.json#/$defs/ResourceCost" },
+        "priority": { "type": "integer" },
+        "one_shot": { "type": "boolean" },
+        "reaction": { "type": "boolean" }
+      }
+    },
+
+    "TransformerPhase": {
+      "type": "string",
+      "enum": ["PreTarget", "PostTarget", "PreResolve", "PostResolve"]
+    },
+
+    "TransformSpec": {
+      "description": "Closed union of transform operations. See specs/03 Section 6.",
+      "oneOf": [
+        { "type": "object", "required": ["ScaleNumeric"], "additionalProperties": false, "properties": { "ScaleNumeric": { "type": "object", "additionalProperties": false, "required": ["field", "numerator", "denominator"], "properties": { "field": { "$ref": "../sfs/v1/_common.json#/$defs/FieldPath" }, "numerator": { "type": "integer" }, "denominator": { "type": "integer", "minimum": 1 } } } } },
+        { "type": "object", "required": ["AddFlat"], "additionalProperties": false, "properties": { "AddFlat": { "type": "object", "additionalProperties": false, "required": ["field", "amount"], "properties": { "field": { "$ref": "../sfs/v1/_common.json#/$defs/FieldPath" }, "amount": { "type": "integer" } } } } },
+        { "type": "object", "required": ["SubstituteDamageType"], "additionalProperties": false, "properties": { "SubstituteDamageType": { "type": "object", "additionalProperties": false, "required": ["from", "to"], "properties": { "from": { "$ref": "../sfs/v1/_common.json#/$defs/DamageType" }, "to": { "$ref": "../sfs/v1/_common.json#/$defs/DamageType" } } } } },
+        { "type": "object", "required": ["NullifyIfTagged"], "additionalProperties": false, "properties": { "NullifyIfTagged": { "type": "object", "additionalProperties": false, "required": ["tag"], "properties": { "tag": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } } } } },
+        { "type": "object", "required": ["SetField"], "additionalProperties": false, "properties": { "SetField": { "type": "object", "additionalProperties": false, "required": ["field", "value"], "properties": { "field": { "$ref": "../sfs/v1/_common.json#/$defs/FieldPath" }, "value": {} } } } }
+      ]
+    },
+
+    "TransformerDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "phase", "applies_to", "transform", "source", "priority"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/TransformerId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "phase": { "$ref": "#/$defs/TransformerPhase" },
+        "applies_to": { "$ref": "../sfs/v1/_common.json#/$defs/JsonFilter" },
+        "transform": { "$ref": "#/$defs/TransformSpec" },
+        "source": { "type": "string", "enum": ["Pack", "Feature", "Item", "Effect", "Condition"] },
+        "priority": { "type": "integer" }
+      }
+    },
+
+    "EffectBody": {
+      "description": "Declarative effect body. See specs/03 Section 2.",
+      "oneOf": [
+        { "type": "object", "required": ["Damage"], "additionalProperties": false, "properties": { "Damage": { "type": "object", "additionalProperties": false, "required": ["amounts"], "properties": { "amounts": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/DamageRoll" } } } } } },
+        { "type": "object", "required": ["Heal"], "additionalProperties": false, "properties": { "Heal": { "type": "object", "additionalProperties": false, "required": ["amount"], "properties": { "amount": { "$ref": "../sfs/v1/_common.json#/$defs/HealRoll" } } } } },
+        { "type": "object", "required": ["ApplyPersistent"], "additionalProperties": false, "properties": { "ApplyPersistent": { "type": "object", "additionalProperties": false, "required": ["template", "duration"], "properties": { "template": { "$ref": "../sfs/v1/_common.json#/$defs/PersistentEffectTemplateId" }, "duration": { "$ref": "../sfs/v1/_common.json#/$defs/Duration" } } } } },
+        { "type": "object", "required": ["RemovePersistent"], "additionalProperties": false, "properties": { "RemovePersistent": { "type": "object", "additionalProperties": false, "required": ["match"], "properties": { "match": { "$ref": "../sfs/v1/_common.json#/$defs/JsonFilter" } } } } },
+        { "type": "object", "required": ["GrantResource"], "additionalProperties": false, "properties": { "GrantResource": { "type": "object", "additionalProperties": false, "required": ["resource", "amount"], "properties": { "resource": { "$ref": "../sfs/v1/_common.json#/$defs/ResourceId" }, "amount": { "type": "integer" } } } } },
+        { "type": "object", "required": ["SpendResource"], "additionalProperties": false, "properties": { "SpendResource": { "type": "object", "additionalProperties": false, "required": ["resource", "amount"], "properties": { "resource": { "$ref": "../sfs/v1/_common.json#/$defs/ResourceId" }, "amount": { "type": "integer" } } } } },
+        { "type": "object", "required": ["MoveEntity"], "additionalProperties": false, "properties": { "MoveEntity": { "type": "object", "additionalProperties": false, "required": ["to"], "properties": { "to": { "$ref": "../sfs/v1/_common.json#/$defs/Position" } } } } },
+        { "type": "object", "required": ["SfsCall"], "additionalProperties": false, "properties": { "SfsCall": { "type": "object", "additionalProperties": false, "required": ["function", "args"], "properties": { "function": { "$ref": "../sfs/v1/_common.json#/$defs/SfsFunctionId" }, "args": {} } } } }
+      ]
+    },
+
+    "ResolutionTiming": {
+      "oneOf": [
+        { "type": "string", "enum": ["Immediate", "OnStackResolve"] },
+        { "type": "object", "required": ["DeferredTo"], "additionalProperties": false, "properties": { "DeferredTo": { "type": "object", "additionalProperties": false, "required": ["clock", "at"], "properties": { "clock": { "$ref": "../sfs/v1/_common.json#/$defs/ClockTag" }, "at": { "type": "integer", "minimum": 0 } } } } }
+      ]
+    },
+
+    "EffectTemplateDef": {
+      "description": "Template for an effect node. See specs/04 Section 6.2.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "body"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/EffectTemplateId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "body": { "$ref": "#/$defs/EffectBody" },
+        "timing": { "$ref": "#/$defs/ResolutionTiming" },
+        "scaling": { "$ref": "#/$defs/ScalingSpec" },
+        "default_transformers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TransformerId" } },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "PersistentEffectTemplateDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/PersistentEffectTemplateId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "description": { "type": "string" },
+        "default_duration": { "$ref": "../sfs/v1/_common.json#/$defs/Duration" },
+        "expiry": { "$ref": "../sfs/v1/_common.json#/$defs/ExpiryPredicate" },
+        "grants_triggers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TriggerId" } },
+        "grants_transformers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TransformerId" } },
+        "concentration": { "type": "boolean" },
+        "concentration_break_rule": { "$ref": "../sfs/v1/_common.json#/$defs/ConcentrationBreakRule" },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "XpRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "xp_threshold"],
+      "properties": {
+        "level": { "type": "integer", "minimum": 1 },
+        "xp_threshold": { "type": "integer", "minimum": 0 }
+      }
+    },
+
+    "DeathRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trigger_at_hp", "successes_to_stabilize", "failures_to_die"],
+      "properties": {
+        "trigger_at_hp": { "type": "integer" },
+        "massive_damage_threshold": { "type": "string", "enum": ["damage_minus_remaining_gte_max", "none"] },
+        "successes_to_stabilize": { "type": "integer", "minimum": 1 },
+        "failures_to_die": { "type": "integer", "minimum": 1 },
+        "save_dc": { "type": "integer" },
+        "save_id": { "$ref": "../sfs/v1/_common.json#/$defs/SaveId" }
+      }
+    },
+
+    "ExhaustionRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_level", "effects_per_level"],
+      "properties": {
+        "max_level": { "type": "integer", "minimum": 1 },
+        "effects_per_level": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["level", "transformers"],
+            "properties": {
+              "level": { "type": "integer", "minimum": 1 },
+              "transformers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TransformerId" } }
+            }
+          }
+        },
+        "death_at_max": { "type": "boolean" }
+      }
+    },
+
+    "ProgressionConfig": {
+      "description": "See specs/04 Section 6.5 and specs/08.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["xp_table", "level_up_steps", "rest_types", "death_rules", "exhaustion_rules"],
+      "properties": {
+        "xp_table": { "type": "array", "items": { "$ref": "#/$defs/XpRow" } },
+        "level_up_steps": {
+          "type": "object",
+          "additionalProperties": { "type": "array", "items": { "$ref": "#/$defs/LevelUpStepConfig" } }
+        },
+        "rest_types": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/RestId" } },
+        "death_rules": { "$ref": "#/$defs/DeathRules" },
+        "exhaustion_rules": { "$ref": "#/$defs/ExhaustionRules" }
+      }
+    },
+
+    "FormulaNode": {
+      "description": "Tiny arithmetic tree for derived stat computation. Max depth 8, enforced at load. No loops, no variables, no functions. See specs/05 Section 8.",
+      "oneOf": [
+        { "type": "object", "required": ["Add"], "additionalProperties": false, "properties": { "Add": { "type": "array", "items": { "$ref": "#/$defs/FormulaNode" }, "minItems": 2, "maxItems": 2 } } },
+        { "type": "object", "required": ["Sub"], "additionalProperties": false, "properties": { "Sub": { "type": "array", "items": { "$ref": "#/$defs/FormulaNode" }, "minItems": 2, "maxItems": 2 } } },
+        { "type": "object", "required": ["Mul"], "additionalProperties": false, "properties": { "Mul": { "type": "array", "items": { "$ref": "#/$defs/FormulaNode" }, "minItems": 2, "maxItems": 2 } } },
+        { "type": "object", "required": ["Div"], "additionalProperties": false, "properties": { "Div": { "type": "array", "items": { "$ref": "#/$defs/FormulaNode" }, "minItems": 2, "maxItems": 2 } } },
+        { "type": "object", "required": ["Const"], "additionalProperties": false, "properties": { "Const": { "type": "integer" } } },
+        { "type": "object", "required": ["StatRef"], "additionalProperties": false, "properties": { "StatRef": { "$ref": "../sfs/v1/_common.json#/$defs/StatId" } } },
+        { "type": "string", "enum": ["ProficiencyBonus"] },
+        { "type": "object", "required": ["Clamp"], "additionalProperties": false, "properties": { "Clamp": { "type": "object", "additionalProperties": false, "required": ["value", "min", "max"], "properties": { "value": { "$ref": "#/$defs/FormulaNode" }, "min": { "type": "integer" }, "max": { "type": "integer" } } } } }
+      ]
+    },
+
+    "DerivedStatRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "formula"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/DerivedStatId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "formula": { "$ref": "#/$defs/FormulaNode" }
+      }
+    },
+
+    "ZoneGraph": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["zones", "adjacency"],
+      "properties": {
+        "zones": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "display_name", "footprint", "cover", "difficult_terrain"],
+            "properties": {
+              "id": { "$ref": "../sfs/v1/_common.json#/$defs/ZoneId" },
+              "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+              "footprint": {
+                "oneOf": [
+                  { "type": "string", "enum": ["Abstract"] },
+                  { "type": "object", "required": ["Grid"], "additionalProperties": false, "properties": { "Grid": { "type": "object", "additionalProperties": false, "required": ["cells"], "properties": { "cells": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/GridOffset" } } } } } }
+                ]
+              },
+              "cover": { "type": "string", "enum": ["None", "Half", "ThreeQuarters", "Full"] },
+              "difficult_terrain": { "type": "boolean" },
+              "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+            }
+          }
+        },
+        "adjacency": {
+          "type": "object",
+          "additionalProperties": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/ZoneId" } }
+        },
+        "grid": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "width": { "type": "integer", "minimum": 1 },
+            "height": { "type": "integer", "minimum": 1 },
+            "cell_size_ft": { "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    },
+
+    "EntityBlueprint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["blueprint_id"],
+      "properties": {
+        "blueprint_id": { "$ref": "../sfs/v1/_common.json#/$defs/BlueprintId" },
+        "components_override": { "type": "object" }
+      }
+    },
+
+    "SceneTemplate": {
+      "description": "Pack-provided starter scene. See specs/06 Section 7.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "zones", "initial_mode"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/SceneTemplateId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "zones": { "$ref": "#/$defs/ZoneGraph" },
+        "ambient_triggers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TriggerId" } },
+        "ambient_transformers": { "type": "array", "items": { "$ref": "../sfs/v1/_common.json#/$defs/TransformerId" } },
+        "initial_entities": { "type": "array", "items": { "$ref": "#/$defs/EntityBlueprint" } },
+        "initial_mode": { "type": "string", "enum": ["Exploration", "Social", "Combat", "Downtime"] }
+      }
+    },
+
+    "RollTableEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max", "result"],
+      "properties": {
+        "min": { "type": "integer" },
+        "max": { "type": "integer" },
+        "result": { "type": "string" },
+        "effect_template": { "$ref": "../sfs/v1/_common.json#/$defs/EffectTemplateId" },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "../sfs/v1/_common.json#/$defs/Tag" } }
+      }
+    },
+
+    "RollTable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "dice", "entries"],
+      "properties": {
+        "id": { "$ref": "../sfs/v1/_common.json#/$defs/RollTableId" },
+        "display_name": { "$ref": "../sfs/v1/_common.json#/$defs/DisplayName" },
+        "dice": { "$ref": "../sfs/v1/_common.json#/$defs/DieExpression" },
+        "entries": { "type": "array", "items": { "$ref": "#/$defs/RollTableEntry" } }
+      }
+    }
+  }
 }
