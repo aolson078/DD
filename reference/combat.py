@@ -375,9 +375,22 @@ def advance_turn(state: SessionState) -> tuple[SessionState, EventBatch, dict | 
                     data={"by": 1, "clock": "round"},
                 ))
 
-            combat.turn_phase = TurnPhase.START_OF_TURN
-            # TurnStarted for the new entity will be emitted by the
-            # StartOfTurn phase on the next step() call.
+            # Immediately transition through StartOfTurn: emit TurnStarted,
+            # set up fresh action economy, and advance to Main phase.
+            # This avoids the engine needing two separate step() calls
+            # for BetweenTurns -> StartOfTurn -> Main.
+            new_active = combat.active_entity
+            if new_active is not None:
+                event_id = state.next_event_id()
+                events.append(Event(
+                    id=event_id,
+                    clock=dict(state.clocks),
+                    kind=EventKind.TURN_STARTED,
+                    source=new_active,
+                    data={"entity": new_active, "round": combat.round},
+                ))
+                combat.action_economy[new_active] = ActionEconomy.fresh()
+            combat.turn_phase = TurnPhase.MAIN
             return state, events, None
 
     return state, events, None
