@@ -1,11 +1,77 @@
 [
-  {"kind": "TurnStarted", "key_fields": {"entity": 1, "round": 1}},
-  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 1}},
-  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 1}},
-  {"kind": "RollMade", "key_fields": {"purpose": "Attack"}},
-  {"kind": "AttackResolved", "key_fields": {"attacker": 1, "defender": 2, "hit": true, "crit": false}},
-  {"kind": "EffectPushed", "key_fields": {"type": "Damage", "damage_type": "fire", "amount": 12}},
-  {"kind": "EffectResolved", "key_fields": {"transformed_amount": 6}},
-  {"kind": "ResourceChanged", "key_fields": {"entity": 2, "resource": "hp", "delta": -6, "new_current": 15}},
-  {"kind": "TurnEnded", "key_fields": {"entity": 1}}
+  {
+    "clock": {"round": 1, "turn": 0},
+    "data": {"entity": 1, "round": 1},
+    "id": 1,
+    "kind": "TurnStarted",
+    "source": 1
+  },
+  {
+    "clock": {"round": 1, "turn": 0},
+    "data": {"choice": "cast_firebolt", "request_id": 1},
+    "id": 2,
+    "kind": "DriverResponseRecorded"
+  },
+  {
+    "clock": {"round": 1, "turn": 0},
+    "data": {
+      "actor": 1,
+      "result": {
+        "kept": [{"dropped": false, "kind": {"Dn": 20}, "value": 1}],
+        "modifier_total": 7,
+        "natural": 1,
+        "raw": [{"dropped": false, "kind": {"Dn": 20}, "value": 1}],
+        "spec": {
+          "dice": [{"count": 1, "keep": "All", "kind": {"Dn": 20}}],
+          "mode": "Straight",
+          "modifiers": [{"applies_when": "Always", "source": "Stat", "value": 7}],
+          "purpose": "Attack"
+        },
+        "total": 8
+      },
+      "spec": {
+        "dice": [{"count": 1, "keep": "All", "kind": {"Dn": 20}}],
+        "mode": "Straight",
+        "modifiers": [{"applies_when": "Always", "source": "Stat", "value": 7}],
+        "purpose": "Attack"
+      }
+    },
+    "id": 3,
+    "kind": "RollMade",
+    "source": 1
+  },
+  {
+    "clock": {"round": 1, "turn": 0},
+    "data": {"actor": 1, "check_id": "RollPurpose.ATTACK", "dc": 15, "margin": -7, "total": 8},
+    "id": 4,
+    "kind": "CheckResolved",
+    "source": 1
+  },
+  {
+    "clock": {"round": 1, "turn": 0},
+    "data": {"attacker": 1, "crit": false, "defender": 2, "hit": false},
+    "id": 5,
+    "kind": "AttackResolved",
+    "source": 1
+  },
+  {
+    "clock": {"round": 1, "turn": 0},
+    "data": {"entity": 1},
+    "id": 6,
+    "kind": "TurnEnded",
+    "source": 1
+  },
+  {
+    "clock": {"round": 1, "turn": 0},
+    "data": {"entity": 2, "round": 1},
+    "id": 7,
+    "kind": "TurnStarted",
+    "source": 2
+  },
+  {
+    "clock": {"round": 1, "turn": 0},
+    "data": {"reason": "halt"},
+    "id": 8,
+    "kind": "SessionEnded"
+  }
 ]

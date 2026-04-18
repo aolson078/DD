@@ -636,7 +636,7 @@ def _resolve_action_effects(
                 try:
                     sfs_args = dict(ref.get("args", {}))
                     # Substitute references
-                    for key in ("actor", "attacker", "source"):
+                    for key in ("actor", "attacker", "source", "entity"):
                         if key in sfs_args and sfs_args[key] == "$active":
                             sfs_args[key] = source
                     if "target" in sfs_args and sfs_args["target"] == "$target":
@@ -796,6 +796,87 @@ def _apply_damage_with_resistance(
                     "resource": "hp",
                 },
             ))
+
+    return state, events
+
+
+def _check_concentration_on_damage(
+    state: SessionState,
+    action_events: EventBatch,
+    attacker: EntityId,
+) -> tuple[SessionState, EventBatch]:
+    """After damage is dealt, check if the target was concentrating.
+
+    If so, trigger a CON save. On failure, remove the concentration effect.
+    See spec: concentration is broken when damage is taken unless the caster
+    passes a CON save (DC = max(10, damage_taken // 2)).
+    """
+    from reference.sfs import dispatch_sfs
+
+    events: EventBatch = []
+
+    # Find any ResourceChanged events that indicate HP loss (damage)
+    for ev in action_events:
+        if ev.kind != EventKind.RESOURCE_CHANGED:
+            continue
+        data = ev.data
+        if data.get("resource") != "hp":
+            continue
+        delta = data.get("delta", 0)
+        if delta >= 0:
+            continue  # No damage taken
+
+        target_id = data.get("entity")
+        if target_id is None:
+            continue
+
+        target = state.entities.get(target_id)
+        if target is None:
+            continue
+
+        # Check if the target has any concentration persistent effects
+        persistent_effects = target.components.get("persistent_effects", [])
+        concentration_effects = [
+            pe for pe in persistent_effects
+            if isinstance(pe, dict) and pe.get("concentration", False)
+        ]
+
+        if not concentration_effects:
+            continue
+
+        # Calculate DC: max(10, damage_taken // 2)
+        damage_taken = abs(delta)
+        dc = max(10, damage_taken // 2)
+
+        # Make concentration save
+        state, save_result, save_events = dispatch_sfs(
+            "sfs.save.concentration", state,
+            {"entity": target_id, "dc": dc, "damage": damage_taken},
+        )
+        events.extend(save_events)
+
+        # If save failed, remove all concentration effects
+        success = save_result.get("success", True)
+        if not success:
+            remaining = []
+            for pe in persistent_effects:
+                if isinstance(pe, dict) and pe.get("concentration", False):
+                    # Emit PersistentEffectRemoved event
+                    event_id = state.next_event_id()
+                    events.append(Event(
+                        id=event_id,
+                        clock=dict(state.clocks),
+                        kind=EventKind.PERSISTENT_EFFECT_REMOVED,
+                        source=target_id,
+                        data={
+                            "effect_id": pe.get("id", pe.get("effect_id")),
+                            "entity": target_id,
+                            "reason": "ConcentrationBroken",
+                        },
+                    ))
+                else:
+                    remaining.append(pe)
+            target.components["persistent_effects"] = remaining
 
     return state, events
 

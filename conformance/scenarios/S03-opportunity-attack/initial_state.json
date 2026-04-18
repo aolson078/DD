@@ -30,8 +30,7 @@
           "derived": {"armor_class": 15, "attack_bonus": 4}
         },
         "resources": {
-          "hp": {"current": 7, "maximum": 7, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []},
-          "reaction": {"current": 1, "maximum": 1, "recovery": {"type": "OnClockTick", "clock": "round", "amount": "Full"}, "tags": []}
+          "hp": {"current": 7, "maximum": 7, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
         },
         "position": {"scene_id": "dungeon", "zone_id": "zone_a", "offset": [4, 3], "facing": null},
         "controller": {"type": "DriverOwned"},

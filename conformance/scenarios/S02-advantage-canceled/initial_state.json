@@ -63,12 +63,12 @@
         "cover_zone": {"id": "cover_zone", "tags": ["cover"]},
         "open_zone": {"id": "open_zone", "tags": []}
       },
-      "mode": "Exploration"
+      "mode": "Combat"
     }
   },
   "active_scene": "forest",
   "stack": [],
-  "clocks": {"round": 0},
+  "clocks": {"round": 1, "turn": 0},
   "next_entity_id": 3,
   "next_effect_id": 102,
   "next_request_id": 1,

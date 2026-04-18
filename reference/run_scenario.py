@@ -324,8 +324,66 @@ def _add_scenario_actions_to_pack(pack_data: dict) -> dict:
                 "spell_id": "fire_bolt",
                 "tags": ["spell", "cantrip", "attack", "ranged"],
             })
-            pack_data["actions"] = actions
 
+    # Add attempt_stealth action for S02
+    if "attempt_stealth" not in action_ids:
+        actions.append({
+            "id": "attempt_stealth",
+            "display_name": "Attempt Stealth",
+            "kind": "Action",
+            "prerequisites": [],
+            "cost": [],
+            "targeting": {"kind": "Self"},
+            "effects": [
+                {
+                    "sfs_function": "sfs.check.skill",
+                    "args": {
+                        "entity": "$active",
+                        "skill": "stealth",
+                        "dc": 14,
+                    },
+                }
+            ],
+            "tags": ["stealth", "check"],
+        })
+
+    # Add attack_shortsword action for S05
+    if "attack_shortsword" not in action_ids:
+        actions.append({
+            "id": "attack_shortsword",
+            "display_name": "Shortsword Attack",
+            "kind": "Action",
+            "prerequisites": [],
+            "cost": [],
+            "targeting": {
+                "kind": "SingleEntity",
+                "range": 5,
+                "must_be_hostile": True,
+            },
+            "effects": ["melee_damage"],
+            "attack_type": "melee",
+            "tags": ["attack", "melee"],
+        })
+
+    # Add attack_scimitar action for S03
+    if "attack_scimitar" not in action_ids:
+        actions.append({
+            "id": "attack_scimitar",
+            "display_name": "Scimitar Attack",
+            "kind": "Action",
+            "prerequisites": [],
+            "cost": [],
+            "targeting": {
+                "kind": "SingleEntity",
+                "range": 5,
+                "must_be_hostile": True,
+            },
+            "effects": ["melee_damage"],
+            "attack_type": "melee",
+            "tags": ["attack", "melee"],
+        })
+
+    pack_data["actions"] = actions
     return pack_data
 
 

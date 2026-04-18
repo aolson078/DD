@@ -52,7 +52,7 @@
       "description": "Fire damage reduced by resistance transformer",
       "tags": ["E3", "E4", "E7", "D2", "S4", "T1", "T2"],
       "path": "scenarios/S01-damage-resistance",
-      "expected_log_sha256": "TBD",
+      "expected_log_sha256": "72886def153b724bdbe562a6be92cdc1c40ef316a0af4add20b335a8f60d08fe",
       "max_steps": 50
     },
     {

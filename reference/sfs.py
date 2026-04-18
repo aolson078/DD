@@ -809,6 +809,86 @@ def sfs_save_death(state: 'SessionState', args: dict) -> tuple['SessionState', d
 
 
 # ---------------------------------------------------------------------------
+# sfs.save.concentration  (spec 04 Section 5.5)
+# ---------------------------------------------------------------------------
+
+@sfs_function("sfs.save.concentration")
+def sfs_save_concentration(state: 'SessionState', args: dict) -> tuple['SessionState', dict, EventBatch]:
+    """Concentration save: d20 + CON modifier vs DC.
+
+    DC = max(10, damage // 2). Used when a concentrating caster takes damage.
+
+    Input: {entity, dc?, damage?}
+    Output: {roll, total, dc, success}
+    """
+    state = copy.deepcopy(state)
+    events: EventBatch = []
+
+    entity_id = args["entity"]
+    damage = args.get("damage", 0)
+    dc = args.get("dc", max(10, damage // 2))
+
+    entity = state.entities.get(entity_id)
+    con_mod = 0
+    if entity:
+        stats = entity.get_stats()
+        if stats:
+            con_score = stats.scores.get("CON", stats.scores.get("con", 10))
+            con_mod = (con_score - 10) // 2
+            # Use con_save_bonus if available (includes proficiency)
+            con_mod = stats.derived.get("con_save_bonus", con_mod)
+
+    all_mods = [Modifier(value=con_mod, source=ModifierSource(kind="Stat", value="con"))]
+
+    spec = RollSpec(
+        dice=[DieGroup(count=1, kind=DieKindDn(20), keep=KeepRule.ALL)],
+        modifiers=all_mods,
+        mode=RollMode.STRAIGHT,
+        purpose=RollPurposeSave(save_id="concentration"),
+    )
+
+    result, state.rng = resolve_roll(spec, state.rng)
+
+    total = result.total
+    success = total >= dc
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.ROLL_MADE,
+        source=entity_id,
+        data={
+            "actor": entity_id,
+            "result": result.to_dict(),
+            "spec": spec.to_dict(),
+        },
+    ))
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.SAVE_RESOLVED,
+        source=entity_id,
+        data={
+            "ability": "concentration",
+            "dc": dc,
+            "entity": entity_id,
+            "success": success,
+            "total": total,
+        },
+    ))
+
+    return state, {
+        "dc": dc,
+        "roll": result.to_dict(),
+        "success": success,
+        "total": total,
+    }, events
+
+
+# ---------------------------------------------------------------------------
 # sfs.check.skill  (spec 04 Section 5.6)
 # ---------------------------------------------------------------------------
 
@@ -1454,7 +1534,7 @@ _STUB_FUNCTIONS = [
     "sfs.roll.hit_die",
     "sfs.roll.table",
     "sfs.check.contested",
-    "sfs.save.concentration",
+    # "sfs.save.concentration" is implemented above
     "sfs.attack.spell",
     "sfs.damage.from_effect",
     "sfs.crit.check",

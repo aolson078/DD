@@ -10,7 +10,7 @@
     "request_id": 2,
     "response": {
       "type": "ChoiceResponse",
-      "choice": {"id": "take_reaction", "reaction": "opportunity_attack", "target": 1}
+      "choice": {"id": "attack_scimitar", "target": 1}
     }
   }
 ]
