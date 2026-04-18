@@ -79,6 +79,12 @@ def run_scenario(
                           f"{request.get('type', '?')} "
                           f"(id={request.get('request_id', '?')})")
 
+                # If driver script is exhausted, halt instead of looping
+                if driver.exhausted:
+                    state = transition.next_state  # type: ignore[assignment]
+                    input = StepInput.halt()
+                    continue
+
                 # Feed response from driver
                 response = driver.respond(request)
                 request_id = request.get("request_id", 0)
@@ -253,9 +259,28 @@ def load_initial_state(path: Path, pack_data: dict | None = None) -> SessionStat
     # Check if the active scene is in combat mode
     active_scene_data = state.scenes.get(state.active_scene, {})
     if active_scene_data.get("mode") == "Combat" and state.entities:
-        # Set up combat state
+        # Set up combat state directly without rolling initiative.
+        # The scenario's initial_state defines a pre-configured combat
+        # position. We use entity order by id (ascending) as initiative
+        # order, preserving the RNG state for actual gameplay rolls.
         entity_ids = sorted(state.entities.keys())
-        state, _ = initialize_combat(state, entity_ids)
+        combat = CombatState()
+        combat.round = state.clocks.get("round", 1)
+        combat.initiative.order = entity_ids
+        for eid in entity_ids:
+            combat.initiative.scores[eid] = 0
+            entity = state.entities.get(eid)
+            dex_mod = 0
+            if entity:
+                stats = entity.get_stats()
+                if stats:
+                    dex_mod = (stats.scores.get("DEX", stats.scores.get("dex", 10)) - 10) // 2
+            combat.initiative.tiebreakers[eid] = Tiebreaker(dex=dex_mod, entity_id=eid)
+            combat.action_economy[eid] = ActionEconomy.fresh()
+        combat.active_index = 0
+        combat.turn_phase = TurnPhase.START_OF_TURN
+        state.combat = combat
+        state.mode = "Combat"
 
     return state
 

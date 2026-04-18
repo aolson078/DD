@@ -298,6 +298,15 @@ def advance_turn(state: SessionState) -> tuple[SessionState, EventBatch, dict | 
 
     match combat.turn_phase:
         case TurnPhase.START_OF_TURN:
+            # Emit TurnStarted event
+            event_id = state.next_event_id()
+            events.append(Event(
+                id=event_id,
+                clock=dict(state.clocks),
+                kind=EventKind.TURN_STARTED,
+                source=active,
+                data={"entity": active, "round": combat.round},
+            ))
             # Run trigger_scan for OnTurnStart (simplified)
             # Fresh action economy
             combat.action_economy[active] = ActionEconomy.fresh()
@@ -367,16 +376,8 @@ def advance_turn(state: SessionState) -> tuple[SessionState, EventBatch, dict | 
                 ))
 
             combat.turn_phase = TurnPhase.START_OF_TURN
-            new_active = combat.active_entity
-            if new_active is not None:
-                event_id = state.next_event_id()
-                events.append(Event(
-                    id=event_id,
-                    clock=dict(state.clocks),
-                    kind=EventKind.TURN_STARTED,
-                    source=new_active,
-                    data={"entity": new_active, "round": combat.round},
-                ))
+            # TurnStarted for the new entity will be emitted by the
+            # StartOfTurn phase on the next step() call.
             return state, events, None
 
     return state, events, None
