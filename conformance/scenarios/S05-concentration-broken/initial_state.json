@@ -63,7 +63,7 @@
   "next_entity_id": 3,
   "next_effect_id": 101,
   "next_request_id": 1,
-  "rng": {"seed": [1, 2, 3, 4]},
+  "rng": {"seed": [1125899906842624, 6755399441055744, 3377699720527872, 4503599627370496]},
   "rng_policy": "EngineOnly",
   "event_log_hash_so_far": "0000000000000000000000000000000000000000000000000000000000000000",
   "open_continuation": null,

@@ -28,12 +28,11 @@
         "stats": {
           "scores": {"STR": 8, "DEX": 14, "CON": 12, "INT": 16, "WIS": 12, "CHA": 10},
           "proficiencies": ["arcana"],
-          "derived": {"spell_attack_bonus": 6, "spell_save_dc": 14}
+          "derived": {"spell_attack_bonus": 6, "spell_save_dc": 14, "armor_class": 12}
         },
         "resources": {
           "hp": {"current": 22, "maximum": 22, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []},
-          "spell_slots_3": {"current": 2, "maximum": 2, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []},
-          "reaction": {"current": 1, "maximum": 1, "recovery": {"type": "OnClockTick", "clock": "round", "amount": "Full"}, "tags": []}
+          "spell_slots_3": {"current": 2, "maximum": 2, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
         },
         "position": {"scene_id": "arena", "zone_id": "zone_b", "offset": [10, 0], "facing": null},
         "controller": {"type": "DriverOwned"},

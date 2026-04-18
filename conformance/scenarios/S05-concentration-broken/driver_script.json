@@ -3,6 +3,13 @@
     "request_id": 1,
     "response": {
       "type": "ChoiceResponse",
+      "choice": {"id": "end_turn"}
+    }
+  },
+  {
+    "request_id": 2,
+    "response": {
+      "type": "ChoiceResponse",
       "choice": {"id": "attack_shortsword", "target": 1}
     }
   }
