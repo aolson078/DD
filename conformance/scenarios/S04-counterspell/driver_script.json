@@ -1,0 +1,16 @@
+[
+  {
+    "request_id": 1,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "cast_firebolt", "target": 2}
+    }
+  },
+  {
+    "request_id": 2,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "take_reaction", "reaction": "counterspell", "target_effect": "firebolt"}
+    }
+  }
+]

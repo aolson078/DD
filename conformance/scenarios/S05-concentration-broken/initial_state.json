@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0.0",
+  "sfs_version": "1.0.0",
+  "pack_ids": ["srd-5e-lite"],
+  "entities": {
+    "1": {
+      "id": 1,
+      "name": "Cleric",
+      "components": {
+        "stats": {
+          "scores": {"STR": 14, "DEX": 10, "CON": 12, "INT": 10, "WIS": 18, "CHA": 12},
+          "proficiencies": ["religion", "medicine"],
+          "derived": {"spell_save_dc": 15, "con_save_bonus": 1}
+        },
+        "resources": {
+          "hp": {"current": 30, "maximum": 30, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "temple", "zone_id": "zone_a", "offset": null, "facing": null},
+        "controller": {"type": "Player", "player_id": "player1"},
+        "persistent_effects": [
+          {
+            "id": 100,
+            "template_id": "bless",
+            "source": 1,
+            "target": 1,
+            "concentration": true,
+            "modifiers": [{"type": "Bonus", "value": "1d4", "applies_to": ["attack", "save"]}],
+            "expiry": {"type": "TimeElapsed", "clock": "round", "amount": 10}
+          }
+        ]
+      }
+    },
+    "2": {
+      "id": 2,
+      "name": "Skeleton",
+      "components": {
+        "stats": {
+          "scores": {"STR": 10, "DEX": 14, "CON": 15, "INT": 6, "WIS": 8, "CHA": 5},
+          "proficiencies": ["shortsword"],
+          "derived": {"armor_class": 13, "attack_bonus": 4}
+        },
+        "resources": {
+          "hp": {"current": 13, "maximum": 13, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "temple", "zone_id": "zone_a", "offset": null, "facing": null},
+        "controller": {"type": "DriverOwned"},
+        "persistent_effects": []
+      }
+    }
+  },
+  "scenes": {
+    "temple": {
+      "id": "temple",
+      "zones": {
+        "zone_a": {"id": "zone_a", "tags": []}
+      },
+      "mode": "Combat"
+    }
+  },
+  "active_scene": "temple",
+  "stack": [],
+  "clocks": {"round": 1, "turn": 0},
+  "next_entity_id": 3,
+  "next_effect_id": 101,
+  "next_request_id": 1,
+  "rng": {"seed": [1, 2, 3, 4]},
+  "rng_policy": "EngineOnly",
+  "event_log_hash_so_far": "0000000000000000000000000000000000000000000000000000000000000000",
+  "open_continuation": null,
+  "recoverable_retry_count": 0,
+  "max_recoverable_retries": 3
+}

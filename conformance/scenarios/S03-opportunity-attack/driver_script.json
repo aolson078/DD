@@ -1,0 +1,16 @@
+[
+  {
+    "request_id": 1,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "move", "destination": {"zone_id": "zone_b", "offset": [8, 3]}}
+    }
+  },
+  {
+    "request_id": 2,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "take_reaction", "reaction": "opportunity_attack", "target": 1}
+    }
+  }
+]

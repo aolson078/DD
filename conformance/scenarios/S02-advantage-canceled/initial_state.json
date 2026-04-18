@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "sfs_version": "1.0.0",
+  "pack_ids": ["srd-5e-lite"],
+  "entities": {
+    "1": {
+      "id": 1,
+      "name": "Rogue",
+      "components": {
+        "stats": {
+          "scores": {"STR": 10, "DEX": 18, "CON": 12, "INT": 14, "WIS": 12, "CHA": 10},
+          "proficiencies": ["stealth"],
+          "derived": {"stealth_bonus": 8}
+        },
+        "resources": {
+          "hp": {"current": 30, "maximum": 30, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "forest", "zone_id": "cover_zone", "offset": null, "facing": null},
+        "controller": {"type": "Player", "player_id": "player1"},
+        "persistent_effects": [
+          {
+            "id": 100,
+            "template_id": "advantage_from_cover",
+            "source": 1,
+            "target": 1,
+            "modifiers": [{"type": "RollMode", "mode": "Advantage", "applies_to": "stealth"}],
+            "expiry": null
+          }
+        ]
+      }
+    },
+    "2": {
+      "id": 2,
+      "name": "Guard",
+      "components": {
+        "stats": {
+          "scores": {"STR": 14, "DEX": 10, "CON": 12, "INT": 10, "WIS": 14, "CHA": 10},
+          "proficiencies": ["perception"],
+          "derived": {"passive_perception": 14}
+        },
+        "resources": {
+          "hp": {"current": 26, "maximum": 26, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "forest", "zone_id": "open_zone", "offset": null, "facing": null},
+        "controller": {"type": "DriverOwned"},
+        "persistent_effects": [
+          {
+            "id": 101,
+            "template_id": "blessed_target_aura",
+            "source": 2,
+            "target": 2,
+            "modifiers": [{"type": "RollMode", "mode": "Disadvantage", "applies_to_opponents": "stealth"}],
+            "expiry": null
+          }
+        ]
+      }
+    }
+  },
+  "scenes": {
+    "forest": {
+      "id": "forest",
+      "zones": {
+        "cover_zone": {"id": "cover_zone", "tags": ["cover"]},
+        "open_zone": {"id": "open_zone", "tags": []}
+      },
+      "mode": "Exploration"
+    }
+  },
+  "active_scene": "forest",
+  "stack": [],
+  "clocks": {"round": 0},
+  "next_entity_id": 3,
+  "next_effect_id": 102,
+  "next_request_id": 1,
+  "rng": {"seed": [1, 2, 3, 4]},
+  "rng_policy": "EngineOnly",
+  "event_log_hash_so_far": "0000000000000000000000000000000000000000000000000000000000000000",
+  "open_continuation": null,
+  "recoverable_retry_count": 0,
+  "max_recoverable_retries": 3
+}

@@ -1,0 +1,14 @@
+[
+  {"kind": "TurnStarted", "key_fields": {"entity": 1, "round": 1}},
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 1}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 1}},
+  {"kind": "EffectPushed", "key_fields": {"type": "Spell", "name": "firebolt"}},
+  {"kind": "ReactionOffered", "key_fields": {"to": 2, "cause": "spell_cast"}},
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 2}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 2}},
+  {"kind": "ReactionTaken", "key_fields": {"by": 2}},
+  {"kind": "EffectPushed", "key_fields": {"type": "Spell", "name": "counterspell"}},
+  {"kind": "EffectResolved", "key_fields": {"name": "counterspell", "result": "success"}},
+  {"kind": "EffectExpired", "key_fields": {"name": "firebolt", "reason": "Countered"}},
+  {"kind": "TurnEnded", "key_fields": {"entity": 1}}
+]

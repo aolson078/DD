@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0.0",
+  "sfs_version": "1.0.0",
+  "pack_ids": ["srd-5e-lite"],
+  "entities": {
+    "1": {
+      "id": 1,
+      "name": "Player Wizard",
+      "components": {
+        "stats": {
+          "scores": {"STR": 8, "DEX": 14, "CON": 12, "INT": 18, "WIS": 12, "CHA": 10},
+          "proficiencies": ["arcana"],
+          "derived": {"spell_attack_bonus": 7, "spell_save_dc": 15}
+        },
+        "resources": {
+          "hp": {"current": 22, "maximum": 22, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []},
+          "spell_slots_1": {"current": 4, "maximum": 4, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "arena", "zone_id": "zone_a", "offset": [0, 0], "facing": null},
+        "controller": {"type": "Player", "player_id": "player1"},
+        "persistent_effects": []
+      }
+    },
+    "2": {
+      "id": 2,
+      "name": "Enemy Wizard",
+      "components": {
+        "stats": {
+          "scores": {"STR": 8, "DEX": 14, "CON": 12, "INT": 16, "WIS": 12, "CHA": 10},
+          "proficiencies": ["arcana"],
+          "derived": {"spell_attack_bonus": 6, "spell_save_dc": 14}
+        },
+        "resources": {
+          "hp": {"current": 22, "maximum": 22, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []},
+          "spell_slots_3": {"current": 2, "maximum": 2, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []},
+          "reaction": {"current": 1, "maximum": 1, "recovery": {"type": "OnClockTick", "clock": "round", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "arena", "zone_id": "zone_b", "offset": [10, 0], "facing": null},
+        "controller": {"type": "DriverOwned"},
+        "persistent_effects": []
+      }
+    }
+  },
+  "scenes": {
+    "arena": {
+      "id": "arena",
+      "zones": {
+        "zone_a": {"id": "zone_a", "tags": []},
+        "zone_b": {"id": "zone_b", "tags": []}
+      },
+      "mode": "Combat"
+    }
+  },
+  "active_scene": "arena",
+  "stack": [],
+  "clocks": {"round": 1, "turn": 0},
+  "next_entity_id": 3,
+  "next_effect_id": 1,
+  "next_request_id": 1,
+  "rng": {"seed": [1, 2, 3, 4]},
+  "rng_policy": "EngineOnly",
+  "event_log_hash_so_far": "0000000000000000000000000000000000000000000000000000000000000000",
+  "open_continuation": null,
+  "recoverable_retry_count": 0,
+  "max_recoverable_retries": 3
+}
