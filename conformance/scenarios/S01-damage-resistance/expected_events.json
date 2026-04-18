@@ -1,0 +1,11 @@
+[
+  {"kind": "TurnStarted", "key_fields": {"entity": 1, "round": 1}},
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 1}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 1}},
+  {"kind": "RollMade", "key_fields": {"purpose": "Attack"}},
+  {"kind": "AttackResolved", "key_fields": {"attacker": 1, "defender": 2, "hit": true, "crit": false}},
+  {"kind": "EffectPushed", "key_fields": {"type": "Damage", "damage_type": "fire", "amount": 12}},
+  {"kind": "EffectResolved", "key_fields": {"transformed_amount": 6}},
+  {"kind": "ResourceChanged", "key_fields": {"entity": 2, "resource": "hp", "delta": -6, "new_current": 15}},
+  {"kind": "TurnEnded", "key_fields": {"entity": 1}}
+]

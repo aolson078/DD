@@ -1,0 +1,230 @@
+{
+  "suite_version": "1.0.0-draft.0",
+  "pack_schema_version": "1.0.0",
+  "sfs_version": "1.0.0",
+  "invariant_coverage": {
+    "E1": ["S11"],
+    "E2": [],
+    "E3": ["S01", "S03", "S12"],
+    "E4": ["S01", "S05"],
+    "E5": ["S11"],
+    "E6": ["S11"],
+    "E7": ["S01", "S02"],
+    "E8": ["S10", "S12"],
+    "D1": ["S18"],
+    "D2": ["S01", "S02"],
+    "D3": ["S11"],
+    "D4": ["S11"],
+    "S1": ["S03", "S04"],
+    "S2": ["S03", "S04"],
+    "S3": ["S04"],
+    "S4": ["S01", "S17"],
+    "R1": ["S05"],
+    "R2": ["S05"],
+    "T1": ["S01", "S15"],
+    "T2": ["S01", "S17"],
+    "P1": ["S05"],
+    "L1": ["S07"],
+    "RE1": ["S02", "S08"],
+    "RE2": ["S08"],
+    "RE3": ["S14"],
+    "SC1": ["S09", "S20"],
+    "SC2": ["S09"],
+    "SC3": ["S20"],
+    "C1": ["S13"],
+    "C2": ["S13"],
+    "C3": ["S06", "S19"],
+    "C4": ["S09"],
+    "PR1": ["S06", "S19"],
+    "PR2": ["S19"],
+    "PR3": ["S19"],
+    "PS1": ["S11"],
+    "PS2": ["S11"],
+    "PS3": ["S11"],
+    "PS4": ["S11"],
+    "PS5": ["S11"],
+    "PS6": ["S11"]
+  },
+  "scenarios": [
+    {
+      "id": "S01",
+      "name": "Damage Resistance",
+      "description": "Fire damage reduced by resistance transformer",
+      "tags": ["transformer", "damage", "S4", "T1", "T2", "D2", "E7"],
+      "path": "scenarios/S01-damage-resistance",
+      "expected_log_sha256": "TBD",
+      "max_steps": 50
+    },
+    {
+      "id": "S02",
+      "name": "Advantage Canceled by Disadvantage",
+      "description": "Advantage and disadvantage cancel to a straight roll",
+      "tags": ["modifiers", "advantage", "disadvantage", "RE1", "D2", "E7"],
+      "path": "scenarios/S02-advantage-canceled",
+      "expected_log_sha256": "TBD",
+      "max_steps": 50
+    },
+    {
+      "id": "S03",
+      "name": "Opportunity Attack",
+      "description": "Reaction trigger fires during movement, resolves before move completes",
+      "tags": ["reaction", "movement", "S1", "S2", "E3"],
+      "path": "scenarios/S03-opportunity-attack",
+      "expected_log_sha256": "TBD",
+      "max_steps": 100
+    },
+    {
+      "id": "S04",
+      "name": "Counterspell",
+      "description": "Reaction interrupts a spell on the stack, removing it before resolution",
+      "tags": ["reaction", "stack", "spell", "S1", "S2", "S3"],
+      "path": "scenarios/S04-counterspell",
+      "expected_log_sha256": "TBD",
+      "max_steps": 100
+    },
+    {
+      "id": "S05",
+      "name": "Concentration Broken",
+      "description": "Damage triggers concentration save; failure removes persistent effect",
+      "tags": ["concentration", "persistent-effect", "save", "P1", "R1", "R2", "E4"],
+      "path": "scenarios/S05-concentration-broken",
+      "expected_log_sha256": "TBD",
+      "max_steps": 100
+    },
+    {
+      "id": "S06",
+      "name": "Short Rest with Hit Dice",
+      "description": "Hit die spending during short rest with pack-driven prompt loop",
+      "tags": ["rest", "hit-dice", "recovery", "PR1", "C3"],
+      "path": "scenarios/S06-short-rest-hit-dice",
+      "expected_log_sha256": "TBD",
+      "max_steps": 100
+    },
+    {
+      "id": "S07",
+      "name": "Level Up Fighter to 4",
+      "description": "Pack-scripted level-up flow with ASI/feat choice",
+      "tags": ["level-up", "progression", "L1"],
+      "path": "scenarios/S07-level-up-fighter-4",
+      "expected_log_sha256": "TBD",
+      "max_steps": 100
+    },
+    {
+      "id": "S08",
+      "name": "Social Check with Item Bonus",
+      "description": "Modifier collection includes proficiency, stat, item, and inspiration bonuses",
+      "tags": ["modifiers", "item-bonus", "check", "RE1", "RE2"],
+      "path": "scenarios/S08-social-check-with-item-bonus",
+      "expected_log_sha256": "TBD",
+      "max_steps": 50
+    },
+    {
+      "id": "S09",
+      "name": "Exploration to Combat Mid-Move",
+      "description": "Mode change from exploration to combat triggered during movement",
+      "tags": ["mode-change", "initiative", "ambush", "SC1", "SC2", "C4"],
+      "path": "scenarios/S09-exploration-to-combat-mid-move",
+      "expected_log_sha256": "TBD",
+      "max_steps": 100
+    },
+    {
+      "id": "S10",
+      "name": "Pack Load Failure: Missing SFS",
+      "description": "Fatal error on unregistered SFS function in pack manifest",
+      "tags": ["error", "fatal", "pack-load", "E8"],
+      "path": "scenarios/S10-pack-load-missing-sfs",
+      "expected_log_sha256": "TBD",
+      "max_steps": 10
+    },
+    {
+      "id": "S11",
+      "name": "Replay Equivalence",
+      "description": "Replaying a log against the same initial state reproduces identical SHA-256",
+      "tags": ["replay", "determinism", "E1", "E5", "E6", "D3", "D4", "PS1", "PS2", "PS3", "PS4", "PS5", "PS6"],
+      "path": "scenarios/S11-replay-equivalence",
+      "expected_log_sha256": "TBD",
+      "max_steps": 100
+    },
+    {
+      "id": "S12",
+      "name": "Invalid Driver Choice Recovered",
+      "description": "Recoverable error path when driver returns illegal choice, then corrects",
+      "tags": ["error", "recoverable", "re-prompt", "E3", "E8"],
+      "path": "scenarios/S12-invalid-driver-choice-recovered",
+      "expected_log_sha256": "TBD",
+      "max_steps": 50
+    },
+    {
+      "id": "S13",
+      "name": "Persistent Effect Expiry on Tick",
+      "description": "Time-based expiry predicate fires on the correct clock tick",
+      "tags": ["persistent-effect", "expiry", "clock", "C1", "C2"],
+      "path": "scenarios/S13-persistent-effect-expiry-on-tick",
+      "expected_log_sha256": "TBD",
+      "max_steps": 200
+    },
+    {
+      "id": "S14",
+      "name": "Aura Stacking",
+      "description": "Two overlapping auras with anti-stack trigger removing the earlier effect",
+      "tags": ["aura", "stacking", "modifier", "RE3"],
+      "path": "scenarios/S14-auras-stacking",
+      "expected_log_sha256": "TBD",
+      "max_steps": 100
+    },
+    {
+      "id": "S15",
+      "name": "Temporary HP Absorption",
+      "description": "TempHP transformer absorbs damage before HP reduction",
+      "tags": ["temp-hp", "damage", "transformer", "T1"],
+      "path": "scenarios/S15-temporary-hp-absorption",
+      "expected_log_sha256": "TBD",
+      "max_steps": 50
+    },
+    {
+      "id": "S16",
+      "name": "Massive Damage Instant Death",
+      "description": "Damage exceeding max HP triggers instant death via pack rule",
+      "tags": ["damage", "death", "pack-rule"],
+      "path": "scenarios/S16-massive-damage-instant-death",
+      "expected_log_sha256": "TBD",
+      "max_steps": 50
+    },
+    {
+      "id": "S17",
+      "name": "Area Effect with Save for Half",
+      "description": "AOE targeting multiple entities with independent saves and per-target transformer",
+      "tags": ["aoe", "save", "damage", "transformer", "S4", "T2"],
+      "path": "scenarios/S17-area-effect-save-half",
+      "expected_log_sha256": "TBD",
+      "max_steps": 100
+    },
+    {
+      "id": "S18",
+      "name": "Summon Inserted Into Initiative",
+      "description": "Summoned entity inserted at bottom of initiative order",
+      "tags": ["summon", "initiative", "entity-creation", "D1"],
+      "path": "scenarios/S18-summon-inserted-into-initiative",
+      "expected_log_sha256": "TBD",
+      "max_steps": 100
+    },
+    {
+      "id": "S19",
+      "name": "Long Rest Full Recovery",
+      "description": "Long rest recovers HP, spell slots, and removes effects atomically",
+      "tags": ["rest", "recovery", "persistent-effect", "PR1", "PR2", "PR3"],
+      "path": "scenarios/S19-long-rest-full-recovery",
+      "expected_log_sha256": "TBD",
+      "max_steps": 100
+    },
+    {
+      "id": "S20",
+      "name": "Scene Transition During Rest",
+      "description": "Scene transition scheduled during rest completes rest first then transitions",
+      "tags": ["scene", "rest", "ordering", "SC1", "SC3"],
+      "path": "scenarios/S20-scene-transition-during-rest",
+      "expected_log_sha256": "TBD",
+      "max_steps": 100
+    }
+  ]
+}
