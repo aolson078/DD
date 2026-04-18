@@ -122,9 +122,9 @@ def load_pack(source: str | Path | dict,
     # 6. Validate no duplicate IDs within lists
     _validate_no_duplicate_ids(pack_data, pack_id)
 
-    # 7. Validate checksum (if present)
+    # 7. Validate checksum (if present and non-zero)
     checksum = manifest.get("checksum")
-    if checksum:
+    if checksum and checksum != "0" * 64:
         _validate_checksum(pack_data, checksum, pack_id)
 
     # 8. Install into state

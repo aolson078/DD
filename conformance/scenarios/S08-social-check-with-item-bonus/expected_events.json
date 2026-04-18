@@ -1,6 +1,9 @@
 [
   {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 1}},
   {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 1}},
+  {"kind": "ModifiersCollected", "key_fields": {"actor": 1, "check": "persuasion", "sources": ["proficiency", "stat", "item_bonus", "bardic_inspiration"]}},
   {"kind": "RollMade", "key_fields": {"purpose": "Check", "check_id": "persuasion"}},
+  {"kind": "RollMade", "key_fields": {"purpose": "BonusDie", "die": "1d8", "source": "bardic_inspiration"}},
+  {"kind": "PersistentEffectRemoved", "key_fields": {"target": 1, "instance_id": 100, "reason": "OnUseExpired"}},
   {"kind": "CheckResolved", "key_fields": {"actor": 1, "check": "persuasion"}}
 ]

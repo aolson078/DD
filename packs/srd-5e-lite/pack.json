@@ -1859,6 +1859,23 @@
       "tags": [
         "end_turn"
       ]
+    },
+    {
+      "id": "use_potion_healing",
+      "display_name": "Use Potion of Healing",
+      "kind": "Action",
+      "prerequisites": [],
+      "cost": [],
+      "targeting": {
+        "kind": "Self"
+      },
+      "effects": [
+        "cure_wounds_heal"
+      ],
+      "tags": [
+        "consumable",
+        "healing"
+      ]
     }
   ],
   "checks": [
@@ -1997,6 +2014,44 @@
       "priority": 200,
       "one_shot": false,
       "reaction": false
+    },
+    {
+      "id": "extra_attack_trigger",
+      "owner_scope": "Entity",
+      "on": {
+        "OnEvent": {
+          "kind": "AttackResolved",
+          "filter": {
+            "Eq": {
+              "path": "attack_count",
+              "value": 1
+            }
+          }
+        }
+      },
+      "effect_template": "melee_damage",
+      "priority": 50,
+      "one_shot": false,
+      "reaction": false
+    },
+    {
+      "id": "gwm_bonus_attack",
+      "owner_scope": "Entity",
+      "on": {
+        "OnEvent": {
+          "kind": "CriticalHit",
+          "filter": {
+            "Tagged": {
+              "path": "tags",
+              "tag": "heavy"
+            }
+          }
+        }
+      },
+      "effect_template": "melee_damage",
+      "priority": 50,
+      "one_shot": false,
+      "reaction": false
     }
   ],
   "transformers": [
@@ -2055,6 +2110,134 @@
       },
       "source": "Feature",
       "priority": 90
+    },
+    {
+      "id": "shield_ac_transformer",
+      "phase": "PreResolve",
+      "applies_to": {
+        "Eq": {
+          "path": "target.self",
+          "value": true
+        }
+      },
+      "transform": {
+        "AddFlat": {
+          "field": "armor_class",
+          "amount": 5
+        }
+      },
+      "source": "Effect",
+      "priority": 100
+    },
+    {
+      "id": "exhaustion_1",
+      "phase": "PreResolve",
+      "applies_to": {
+        "Eq": {
+          "path": "type",
+          "value": "ability_check"
+        }
+      },
+      "transform": {
+        "SetField": {
+          "field": "disadvantage",
+          "value": true
+        }
+      },
+      "source": "Condition",
+      "priority": 100
+    },
+    {
+      "id": "exhaustion_2",
+      "phase": "PreResolve",
+      "applies_to": {
+        "Eq": {
+          "path": "type",
+          "value": "movement"
+        }
+      },
+      "transform": {
+        "ScaleNumeric": {
+          "field": "speed",
+          "numerator": 1,
+          "denominator": 2
+        }
+      },
+      "source": "Condition",
+      "priority": 100
+    },
+    {
+      "id": "exhaustion_3",
+      "phase": "PreResolve",
+      "applies_to": {
+        "Eq": {
+          "path": "type",
+          "value": "attack_roll"
+        }
+      },
+      "transform": {
+        "SetField": {
+          "field": "disadvantage",
+          "value": true
+        }
+      },
+      "source": "Condition",
+      "priority": 100
+    },
+    {
+      "id": "exhaustion_4",
+      "phase": "PreResolve",
+      "applies_to": {
+        "Eq": {
+          "path": "type",
+          "value": "hp_max"
+        }
+      },
+      "transform": {
+        "ScaleNumeric": {
+          "field": "hp_max",
+          "numerator": 1,
+          "denominator": 2
+        }
+      },
+      "source": "Condition",
+      "priority": 100
+    },
+    {
+      "id": "exhaustion_5",
+      "phase": "PreResolve",
+      "applies_to": {
+        "Eq": {
+          "path": "type",
+          "value": "movement"
+        }
+      },
+      "transform": {
+        "SetField": {
+          "field": "speed",
+          "value": 0
+        }
+      },
+      "source": "Condition",
+      "priority": 110
+    },
+    {
+      "id": "exhaustion_6",
+      "phase": "PreResolve",
+      "applies_to": {
+        "Eq": {
+          "path": "type",
+          "value": "death"
+        }
+      },
+      "transform": {
+        "SetField": {
+          "field": "dead",
+          "value": true
+        }
+      },
+      "source": "Condition",
+      "priority": 100
     }
   ],
   "effect_templates": [

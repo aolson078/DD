@@ -19,6 +19,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 # Ensure the parent of `reference/` is on sys.path so that
 # `from reference.X import Y` works when invoked as a script.
@@ -33,8 +34,13 @@ from reference.engine import (
 )
 from reference.driver import ScriptedDriver
 from reference.pack_loader import load_pack
-from reference.combat import initialize_combat
+from reference.combat import initialize_combat, CombatState, InitiativeOrder, Tiebreaker, ActionEconomy, TurnPhase
 from reference.canonical import canonical_json
+from reference.domain import (
+    Entity, Stats, Resources, ResourcePool, Position, Faction,
+    Controller, PlayerController,
+)
+from reference.rng import seed_rng
 
 
 def run_scenario(
@@ -114,6 +120,190 @@ def run_scenario(
     return event_log
 
 
+# ---------------------------------------------------------------------------
+# Scenario loading helpers
+# ---------------------------------------------------------------------------
+
+def _parse_entity_from_json(eid: int, edata: dict) -> Entity:
+    """Parse an entity from scenario initial_state.json format."""
+    name = edata.get("name", "Unknown")
+    components: dict[str, Any] = {}
+
+    comp_data = edata.get("components", {})
+
+    # Stats
+    if "stats" in comp_data:
+        sd = comp_data["stats"]
+        components["stats"] = Stats(
+            scores=sd.get("scores", {}),
+            proficiencies=sd.get("proficiencies", []),
+            derived=sd.get("derived", {}),
+        )
+
+    # Resources -- the scenario format uses {"hp": {current, maximum, ...}}
+    if "resources" in comp_data:
+        rd = comp_data["resources"]
+        resources = Resources()
+        for res_id, res_val in rd.items():
+            if isinstance(res_val, dict):
+                resources.pools[res_id] = ResourcePool(
+                    current=res_val.get("current", res_val.get("maximum", 0)),
+                    maximum=res_val.get("maximum", 0),
+                    recovery=str(res_val.get("recovery", "Manual")),
+                    tags=res_val.get("tags", []),
+                )
+        components["resources"] = resources
+
+    # Position
+    if "position" in comp_data:
+        pd = comp_data["position"]
+        offset = None
+        if pd.get("offset") and isinstance(pd["offset"], (list, tuple)):
+            offset = tuple(pd["offset"][:2])
+        components["position"] = Position(
+            scene_id=pd.get("scene_id", ""),
+            zone_id=pd.get("zone_id", ""),
+            offset=offset,
+            facing=pd.get("facing"),
+        )
+
+    # Controller
+    if "controller" in comp_data:
+        ctrl = comp_data["controller"]
+        if ctrl == "DriverOwned" or (isinstance(ctrl, dict) and ctrl.get("type") == "DriverOwned"):
+            components["controller"] = Controller.DRIVER_OWNED
+        elif isinstance(ctrl, dict) and ctrl.get("type") == "Player":
+            components["controller"] = PlayerController(ctrl.get("player_id", ""))
+
+    # Faction
+    if "faction" in comp_data:
+        fd = comp_data["faction"]
+        components["faction"] = Faction(
+            primary=fd.get("primary", ""),
+            disposition=fd.get("disposition", {}),
+        )
+
+    # persistent_effects -- store raw for now
+    if "persistent_effects" in comp_data:
+        components["persistent_effects"] = comp_data["persistent_effects"]
+
+    return Entity(id=eid, name=name, components=components)
+
+
+def load_initial_state(path: Path, pack_data: dict | None = None) -> SessionState:
+    """Load a scenario initial_state.json into a SessionState.
+
+    The initial_state.json defines entities, scenes, clocks, rng seed, etc.
+    This function parses that into the engine's SessionState.
+    """
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    # Create base session with seed from initial state
+    rng_data = data.get("rng", {})
+    seed = rng_data.get("seed", [42, 0, 0, 0])
+    state = create_session(seed=seed)
+
+    # Set versions
+    state.schema_version = data.get("schema_version", "1.0.0")
+    state.sfs_version = data.get("sfs_version", "1.0.0")
+    state.pack_ids = data.get("pack_ids", [])
+    state.rng_policy = data.get("rng_policy", "EngineOnly")
+
+    # Counters
+    state._next_entity_id = data.get("next_entity_id", 1)
+    state._next_effect_id = data.get("next_effect_id", 1)
+    state._next_request_id = data.get("next_request_id", 1)
+    state._next_event_id = data.get("next_event_id", 1)
+
+    # Clocks
+    state.clocks = data.get("clocks", {})
+
+    # Hashing
+    state.event_log_hash_so_far = data.get("event_log_hash_so_far", "0" * 64)
+
+    # Continuation
+    state.open_continuation = data.get("open_continuation")
+    state.recoverable_retry_count = data.get("recoverable_retry_count", 0)
+    state.max_recoverable_retries = data.get("max_recoverable_retries", 3)
+
+    # Scenes
+    state.scenes = data.get("scenes", {})
+    state.active_scene = data.get("active_scene", "")
+
+    # Stack (simplified -- just note if non-empty)
+    stack_data = data.get("stack", [])
+    # For now, we leave stack empty (the scenario starts with empty stack)
+
+    # Entities
+    entities_data = data.get("entities", {})
+    for eid_str, edata in entities_data.items():
+        eid = int(eid_str)
+        entity = _parse_entity_from_json(eid, edata)
+        state.entities[eid] = entity
+
+    # Pack data
+    if pack_data is not None:
+        state.pack_data = pack_data
+
+    # Mark as started (the session is pre-initialized)
+    state.started = True
+
+    # Determine if we should be in combat mode
+    # Check if the active scene is in combat mode
+    active_scene_data = state.scenes.get(state.active_scene, {})
+    if active_scene_data.get("mode") == "Combat" and state.entities:
+        # Set up combat state
+        entity_ids = sorted(state.entities.keys())
+        state, _ = initialize_combat(state, entity_ids)
+
+    return state
+
+
+def _add_scenario_actions_to_pack(pack_data: dict) -> dict:
+    """Ensure the pack has actions referenced by scenarios.
+
+    The S01 scenario driver responds with 'cast_firebolt', which is a
+    spell-based action. We synthesize it from the pack's spells and
+    effect_templates so the engine can resolve it.
+    """
+    if pack_data is None:
+        pack_data = {}
+
+    actions = pack_data.get("actions", [])
+    action_ids = {a["id"] for a in actions if isinstance(a, dict)}
+
+    # Add cast_firebolt if fire_bolt spell exists but cast_firebolt action doesn't
+    if "cast_firebolt" not in action_ids:
+        spells = pack_data.get("spells", [])
+        fire_bolt_spell = None
+        for spell in spells:
+            if spell.get("id") == "fire_bolt":
+                fire_bolt_spell = spell
+                break
+
+        if fire_bolt_spell:
+            actions.append({
+                "id": "cast_firebolt",
+                "display_name": "Fire Bolt",
+                "kind": "Action",
+                "prerequisites": [],
+                "cost": [],
+                "targeting": {
+                    "kind": "SingleEntity",
+                    "range": 120,
+                    "must_be_hostile": True,
+                },
+                "effects": fire_bolt_spell.get("effects", []),
+                "attack_type": fire_bolt_spell.get("attack_type", "ranged"),
+                "spell_id": "fire_bolt",
+                "tags": ["spell", "cantrip", "attack", "ranged"],
+            })
+            pack_data["actions"] = actions
+
+    return pack_data
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="D&D Simulator Reference Implementation - Scenario Runner"
@@ -155,35 +345,53 @@ def main() -> None:
     # Pad seed to 4 values
     seed = (args.seed + [0, 0, 0, 0])[:4]
 
-    # Create session
-    state = create_session(seed=seed)
-
-    # Load pack
+    # Load pack first (if provided)
+    pack_data: dict | None = None
     if args.pack:
         pack_path = Path(args.pack)
         if not pack_path.exists():
             print(f"Error: Pack not found: {pack_path}", file=sys.stderr)
             sys.exit(1)
-        _, state = load_pack(pack_path, state)
+        # Load and validate pack, but we'll build state from scenario
+        temp_state = create_session(seed=seed)
+        pack_data, temp_state = load_pack(pack_path, temp_state)
         if args.verbose:
-            print(f"Loaded pack: {state.pack_ids}")
+            print(f"Loaded pack: {temp_state.pack_ids}")
 
     # Load scenario
     if args.scenario:
         scenario_path = Path(args.scenario)
-        if scenario_path.exists():
-            # Load scenario entities, scene, etc.
-            scenario_file = scenario_path / "scenario.json"
-            if scenario_file.exists():
-                with open(scenario_file, "r") as f:
-                    scenario_data = json.load(f)
-                # Merge scenario entities into state
-                if "entities" in scenario_data:
-                    if state.pack_data is None:
-                        state.pack_data = {}
-                    state.pack_data["entities"] = scenario_data["entities"]
-                    from reference.pack_loader import _install_pack_entities
-                    _install_pack_entities(state.pack_data, state)
+        initial_state_file = scenario_path / "initial_state.json"
+        driver_script_file = scenario_path / "driver_script.json"
+
+        if initial_state_file.exists():
+            # Synthesize scenario-specific actions into pack data
+            if pack_data is not None:
+                pack_data = _add_scenario_actions_to_pack(pack_data)
+
+            state = load_initial_state(initial_state_file, pack_data)
+
+            if args.verbose:
+                print(f"Loaded scenario from {scenario_path}")
+                print(f"  Entities: {list(state.entities.keys())}")
+                print(f"  Active scene: {state.active_scene}")
+                if state.combat:
+                    print(f"  Combat: round={state.combat.round}, "
+                          f"order={state.combat.initiative.order}")
+        else:
+            # Fall back to creating a fresh session
+            state = create_session(seed=seed)
+            if pack_data is not None:
+                state.pack_data = pack_data
+
+        # Load driver script
+        if driver_script_file.exists() and args.driver_script is None:
+            args.driver_script = str(driver_script_file)
+    else:
+        # No scenario -- create fresh session
+        state = create_session(seed=seed)
+        if pack_data is not None:
+            state.pack_data = pack_data
 
     # Load driver
     if args.driver_script:
@@ -192,8 +400,8 @@ def main() -> None:
         # Default driver: always end turn
         driver = ScriptedDriver.from_choices(["end_turn"] * 100)
 
-    # Enter combat if requested
-    if args.combat and state.entities:
+    # Enter combat if requested and not already in combat
+    if args.combat and state.entities and state.combat is None:
         entity_ids = list(state.entities.keys())
         state, combat_events = initialize_combat(state, entity_ids)
         if args.verbose:

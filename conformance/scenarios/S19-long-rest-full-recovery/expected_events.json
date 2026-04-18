@@ -6,5 +6,6 @@
   {"kind": "ResourceChanged", "key_fields": {"entity": 1, "resource": "spell_slots_2", "new_current": 3}},
   {"kind": "ResourceChanged", "key_fields": {"entity": 1, "resource": "spell_slots_3", "new_current": 2}},
   {"kind": "ResourceChanged", "key_fields": {"entity": 1, "resource": "hit_dice_d6", "new_current": 4}},
-  {"kind": "PersistentEffectRemoved", "key_fields": {"target": 1, "instance_id": 100, "reason": "RestExpired"}}
+  {"kind": "PersistentEffectRemoved", "key_fields": {"target": 1, "instance_id": 100, "reason": "RestExpired"}},
+  {"kind": "RestCompleted", "key_fields": {"entity": 1, "rest_kind": "long"}}
 ]
