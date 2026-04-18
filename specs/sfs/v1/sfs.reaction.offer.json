@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.reaction.offer.json",
+  "title": "sfs.reaction.offer",
+  "description": "Programmatically open a reaction window. Rarely needed - usually implicit via trigger scan. See specs/03 Section 5.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["ReactionOffered"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["cause_event_id", "eligible"],
+      "additionalProperties": false,
+      "properties": {
+        "cause_event_id": { "$ref": "_common.json#/$defs/EventId" },
+        "eligible": { "type": "array", "items": { "$ref": "_common.json#/$defs/EntityId" } },
+        "trigger_ids": { "type": "array", "items": { "$ref": "_common.json#/$defs/TriggerId" } }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["window_opened"],
+      "properties": {
+        "window_opened": { "type": "boolean" },
+        "entities_offered": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

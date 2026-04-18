@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.move.to_offset.json",
+  "title": "sfs.move.to_offset",
+  "description": "Move to a grid offset (grid scenes only). Validates adjacency in tile coordinates.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["ComponentSet", "ResourceChanged", "ReactionOffered"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["entity", "offset"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": { "$ref": "_common.json#/$defs/EntityId" },
+        "offset": { "$ref": "_common.json#/$defs/GridOffset" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["moved"],
+      "properties": {
+        "moved": { "type": "boolean" },
+        "from_offset": { "$ref": "_common.json#/$defs/GridOffset" },
+        "to_offset": { "$ref": "_common.json#/$defs/GridOffset" },
+        "movement_spent": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

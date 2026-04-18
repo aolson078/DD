@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.effect.dispel.json",
+  "title": "sfs.effect.dispel",
+  "description": "Remove effects flagged as dispellable from a target. Optional level parameter for level-gated dispel.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["PersistentEffectRemoved"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["target"],
+      "additionalProperties": false,
+      "properties": {
+        "target": { "$ref": "_common.json#/$defs/EntityId" },
+        "max_level": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["removed_ids"],
+      "properties": {
+        "removed_ids": { "type": "array", "items": { "$ref": "_common.json#/$defs/PersistentEffectInstanceId" } }
+      }
+    }
+  }
+}

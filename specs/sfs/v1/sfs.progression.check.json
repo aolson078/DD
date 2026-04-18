@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.progression.check.json",
+  "title": "sfs.progression.check",
+  "description": "Check whether level-up is available for an entity. Compares current XP against the pack's xp_table.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Pure",
+  "x-sfs-effects": [],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["entity"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": { "$ref": "_common.json#/$defs/EntityId" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eligible", "current_level", "current_xp"],
+      "properties": {
+        "eligible": { "type": "boolean" },
+        "current_level": { "type": "integer", "minimum": 1 },
+        "current_xp": { "type": "integer", "minimum": 0 },
+        "xp_for_next": { "type": "integer", "minimum": 0 },
+        "available_classes": { "type": "array", "items": { "$ref": "_common.json#/$defs/ClassId" } }
+      }
+    }
+  }
+}

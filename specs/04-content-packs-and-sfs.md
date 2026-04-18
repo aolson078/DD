@@ -22,7 +22,7 @@ Reasons:
   load.
 
 The cost is that rich custom behavior requires an SFS version bump. This is
-accepted. The SFS is intentionally large enough (about 40 functions in v1)
+accepted. The SFS is intentionally large enough (44 functions in v1)
 to cover d20-shaped gameplay end-to-end.
 
 ## 2. Pack Format
@@ -271,7 +271,13 @@ Section 7).
 | `sfs.progression.check` | Check whether level-up is available. |
 | `sfs.progression.apply_level` | Apply a level-up step result. |
 
-SFS v1 totals 41 functions. Every one has a JSON schema and a short
+### 5.11 Scene management
+
+| Id | Purpose |
+|---|---|
+| `sfs.scene.instantiate` | Instantiate a SceneTemplate: clone zones, allocate entity ids, emit events. |
+
+SFS v1 totals 44 functions. Every one has a JSON schema and a short
 behavioral description shipped alongside.
 
 ## 6. Declarative Definitions

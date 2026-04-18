@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.damage.typed.json",
+  "title": "sfs.damage.typed",
+  "description": "Apply typed damage to a target. Runs transformers (resistance, vulnerability, immunity) before applying. See specs/02 Section 4, specs/03 Section 6.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["ResourceChanged", "ComponentSet"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["source", "target", "amounts"],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "$ref": "_common.json#/$defs/EntityId" },
+        "target": { "$ref": "_common.json#/$defs/EntityId" },
+        "amounts": { "type": "array", "items": { "$ref": "_common.json#/$defs/DamageRoll" } },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "$ref": "_common.json#/$defs/DamageTag" } }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["applied"],
+      "properties": {
+        "applied": { "type": "array", "items": { "$ref": "_common.json#/$defs/DamageInstance" } },
+        "total_dealt": { "type": "integer", "minimum": 0 },
+        "target_hp_after": { "type": "integer" }
+      }
+    }
+  }
+}

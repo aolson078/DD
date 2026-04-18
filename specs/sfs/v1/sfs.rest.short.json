@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.rest.short.json",
+  "title": "sfs.rest.short",
+  "description": "Execute a short rest. Recovers resources tagged for short rest, advances clocks, expires eligible effects. See specs/08 Section 3.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["ResourceChanged", "PersistentEffectRemoved", "ClockTicked"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["participants"],
+      "additionalProperties": false,
+      "properties": {
+        "participants": { "type": "array", "items": { "$ref": "_common.json#/$defs/EntityId" } },
+        "tags": { "type": "array", "items": { "$ref": "_common.json#/$defs/Tag" } }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["completed", "interrupted"],
+      "properties": {
+        "completed": { "type": "boolean" },
+        "interrupted": { "type": "boolean" },
+        "interrupt_reason": { "type": "string" },
+        "recovered": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["entity", "resource", "amount"],
+            "properties": {
+              "entity": { "$ref": "_common.json#/$defs/EntityId" },
+              "resource": { "$ref": "_common.json#/$defs/ResourceId" },
+              "amount": { "type": "integer" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

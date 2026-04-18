@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.damage.from_effect.json",
+  "title": "sfs.damage.from_effect",
+  "description": "Apply damage encoded in an EffectNode. Extracts damage rolls from the node's body, resolves them, and delegates to the typed-damage pipeline.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["RollMade", "ResourceChanged", "ComponentSet"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["effect_instance_id", "target"],
+      "additionalProperties": false,
+      "properties": {
+        "effect_instance_id": { "$ref": "_common.json#/$defs/EffectInstanceId" },
+        "target": { "$ref": "_common.json#/$defs/EntityId" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["applied"],
+      "properties": {
+        "applied": { "type": "array", "items": { "$ref": "_common.json#/$defs/DamageInstance" } },
+        "total_dealt": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

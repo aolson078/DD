@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.scene.instantiate.json",
+  "title": "sfs.scene.instantiate",
+  "description": "Instantiate a SceneTemplate: clone zones, allocate fresh entity ids from blueprints, emit EntityCreated and SceneEntered events. See specs/06 Section 7.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["EntityCreated", "SceneEntered", "ComponentSet"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["template_id"],
+      "additionalProperties": false,
+      "properties": {
+        "template_id": { "$ref": "_common.json#/$defs/SceneTemplateId" },
+        "overrides": { "type": "object" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scene_id", "entities_created"],
+      "properties": {
+        "scene_id": { "$ref": "_common.json#/$defs/SceneId" },
+        "entities_created": { "type": "array", "items": { "$ref": "_common.json#/$defs/EntityId" } }
+      }
+    }
+  }
+}

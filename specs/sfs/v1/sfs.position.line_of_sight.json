@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.position.line_of_sight.json",
+  "title": "sfs.position.line_of_sight",
+  "description": "Query whether entity A can see entity B. Considers zones, cover, and visibility rules.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Pure",
+  "x-sfs-effects": [],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["from", "to"],
+      "additionalProperties": false,
+      "properties": {
+        "from": { "$ref": "_common.json#/$defs/EntityId" },
+        "to": { "$ref": "_common.json#/$defs/EntityId" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["visible"],
+      "properties": {
+        "visible": { "type": "boolean" },
+        "cover": { "type": "string", "enum": ["None", "Half", "ThreeQuarters", "Full"] }
+      }
+    }
+  }
+}

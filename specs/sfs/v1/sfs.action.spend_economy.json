@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.action.spend_economy.json",
+  "title": "sfs.action.spend_economy",
+  "description": "Mark action/bonus action/reaction as spent in the entity's ActionEconomy for this turn.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["ComponentSet"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["actor", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "actor": { "$ref": "_common.json#/$defs/EntityId" },
+        "kind": { "type": "string", "enum": ["Action", "BonusAction", "Reaction", "FreeAction", "Movement"] }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["spent"],
+      "properties": {
+        "spent": { "type": "boolean" },
+        "action_used": { "type": "boolean" },
+        "bonus_action_used": { "type": "boolean" },
+        "reaction_used": { "type": "boolean" }
+      }
+    }
+  }
+}

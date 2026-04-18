@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.crit.check.json",
+  "title": "sfs.crit.check",
+  "description": "Evaluate whether a d20 roll is a critical hit based on the pack's CritRule. Default: natural 20.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Pure",
+  "x-sfs-effects": [],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["roll_result"],
+      "additionalProperties": false,
+      "properties": {
+        "roll_result": { "$ref": "_common.json#/$defs/RollResult" },
+        "crit_threshold": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "expanded_crit_range": { "type": "boolean" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["is_crit"],
+      "properties": {
+        "is_crit": { "type": "boolean" },
+        "natural": { "type": "integer" }
+      }
+    }
+  }
+}

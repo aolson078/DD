@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.time.advance.json",
+  "title": "sfs.time.advance",
+  "description": "Advance a named clock by N ticks. Fires OnClockTick triggers and expiry checks.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["ClockTicked", "PersistentEffectRemoved", "ResourceChanged"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["clock", "amount"],
+      "additionalProperties": false,
+      "properties": {
+        "clock": { "$ref": "_common.json#/$defs/ClockTag" },
+        "amount": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["previous", "current"],
+      "properties": {
+        "previous": { "type": "integer", "minimum": 0 },
+        "current": { "type": "integer", "minimum": 0 },
+        "effects_expired": { "type": "integer", "minimum": 0 },
+        "triggers_fired": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.heal.dice.json",
+  "title": "sfs.heal.dice",
+  "description": "Heal by rolling dice (potions, cure spells). Rolls the expression, then applies flat heal with the result.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["RollMade", "ResourceChanged", "ComponentSet"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["source", "target", "dice"],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "$ref": "_common.json#/$defs/EntityId" },
+        "target": { "$ref": "_common.json#/$defs/EntityId" },
+        "dice": { "$ref": "_common.json#/$defs/HealRoll" },
+        "bonus": { "type": "integer" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roll", "healed", "hp_after"],
+      "properties": {
+        "roll": { "$ref": "_common.json#/$defs/RollResult" },
+        "healed": { "type": "integer", "minimum": 0 },
+        "hp_after": { "type": "integer" }
+      }
+    }
+  }
+}

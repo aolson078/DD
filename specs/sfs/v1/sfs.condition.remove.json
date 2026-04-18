@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.condition.remove.json",
+  "title": "sfs.condition.remove",
+  "description": "Remove a condition by id from a target. Removes the associated PersistentEffectInstance.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["PersistentEffectRemoved"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["target", "condition_id"],
+      "additionalProperties": false,
+      "properties": {
+        "target": { "$ref": "_common.json#/$defs/EntityId" },
+        "condition_id": { "$ref": "_common.json#/$defs/ConditionId" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["removed"],
+      "properties": {
+        "removed": { "type": "boolean" },
+        "effect_id": { "$ref": "_common.json#/$defs/PersistentEffectInstanceId" }
+      }
+    }
+  }
+}

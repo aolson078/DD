@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.heal.flat.json",
+  "title": "sfs.heal.flat",
+  "description": "Heal a flat amount. Increases HP up to maximum. If target was Dying, transitions to Alive.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["ResourceChanged", "ComponentSet"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["source", "target", "amount"],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "$ref": "_common.json#/$defs/EntityId" },
+        "target": { "$ref": "_common.json#/$defs/EntityId" },
+        "amount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["healed", "hp_before", "hp_after"],
+      "properties": {
+        "healed": { "type": "integer", "minimum": 0 },
+        "hp_before": { "type": "integer" },
+        "hp_after": { "type": "integer" }
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.effect.apply_persistent.json",
+  "title": "sfs.effect.apply_persistent",
+  "description": "Apply a PersistentEffectTemplate to a target, creating a PersistentEffectInstance. Activates granted triggers and transformers.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["PersistentEffectApplied"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["target", "template_id", "duration"],
+      "additionalProperties": false,
+      "properties": {
+        "target": { "$ref": "_common.json#/$defs/EntityId" },
+        "template_id": { "$ref": "_common.json#/$defs/PersistentEffectTemplateId" },
+        "duration": { "$ref": "_common.json#/$defs/Duration" },
+        "source": { "$ref": "_common.json#/$defs/EntityId" },
+        "concentration": { "type": "boolean" }
+      }
+    },
+    "output": { "$ref": "_common.json#/$defs/PersistentEffectInstance" }
+  }
+}

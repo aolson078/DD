@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.position.teleport.json",
+  "title": "sfs.position.teleport",
+  "description": "Teleport an entity to a position. No opportunity attacks triggered, no movement spent.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["ComponentSet"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["entity", "to"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": { "$ref": "_common.json#/$defs/EntityId" },
+        "to": { "$ref": "_common.json#/$defs/Position" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["previous", "current"],
+      "properties": {
+        "previous": { "$ref": "_common.json#/$defs/Position" },
+        "current": { "$ref": "_common.json#/$defs/Position" }
+      }
+    }
+  }
+}

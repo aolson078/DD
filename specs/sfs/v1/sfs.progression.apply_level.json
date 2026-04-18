@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.progression.apply_level.json",
+  "title": "sfs.progression.apply_level",
+  "description": "Apply a level-up step result. Called by the engine after each PromptDecision in the LevelUpFlow. See specs/08 Section 2.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["LevelUpStep", "ResourceChanged", "ComponentSet"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["entity", "class_id", "step_id", "choice"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": { "$ref": "_common.json#/$defs/EntityId" },
+        "class_id": { "$ref": "_common.json#/$defs/ClassId" },
+        "step_id": { "$ref": "_common.json#/$defs/StepId" },
+        "choice": { "type": "string" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["applied"],
+      "properties": {
+        "applied": { "type": "boolean" },
+        "new_level": { "type": "integer", "minimum": 1 },
+        "grants_added": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

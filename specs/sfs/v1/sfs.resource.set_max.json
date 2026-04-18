@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.resource.set_max.json",
+  "title": "sfs.resource.set_max",
+  "description": "Change a resource's maximum (e.g. HP increase on level up). If current > new_max, current is clamped.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["ResourceChanged"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["entity", "resource", "new_max"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": { "$ref": "_common.json#/$defs/EntityId" },
+        "resource": { "$ref": "_common.json#/$defs/ResourceId" },
+        "new_max": { "type": "integer" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["previous_max", "new_max", "current"],
+      "properties": {
+        "previous_max": { "type": "integer" },
+        "new_max": { "type": "integer" },
+        "current": { "type": "integer" }
+      }
+    }
+  }
+}

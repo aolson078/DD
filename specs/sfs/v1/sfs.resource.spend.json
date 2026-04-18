@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.resource.spend.json",
+  "title": "sfs.resource.spend",
+  "description": "Spend a resource. RecoverableError::ResourceExhausted if current < amount and no BoundBelow allows debt.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["ResourceChanged"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["entity", "resource", "amount"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": { "$ref": "_common.json#/$defs/EntityId" },
+        "resource": { "$ref": "_common.json#/$defs/ResourceId" },
+        "amount": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["previous", "current"],
+      "properties": {
+        "previous": { "type": "integer" },
+        "current": { "type": "integer" }
+      }
+    }
+  }
+}

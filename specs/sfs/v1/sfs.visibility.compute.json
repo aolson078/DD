@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.visibility.compute.json",
+  "title": "sfs.visibility.compute",
+  "description": "Recompute visibility for an observer in a scene. Returns map of EntityId -> KnowledgeLevel. See specs/06 Section 6.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Pure",
+  "x-sfs-effects": [],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["scene_id", "observer"],
+      "additionalProperties": false,
+      "properties": {
+        "scene_id": { "$ref": "_common.json#/$defs/SceneId" },
+        "observer": { "$ref": "_common.json#/$defs/EntityId" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["visibility"],
+      "properties": {
+        "visibility": {
+          "type": "object",
+          "additionalProperties": { "$ref": "_common.json#/$defs/KnowledgeLevel" }
+        }
+      }
+    }
+  }
+}

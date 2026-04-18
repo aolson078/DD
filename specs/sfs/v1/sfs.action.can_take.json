@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.action.can_take.json",
+  "title": "sfs.action.can_take",
+  "description": "Prerequisite check for an action. Returns whether the actor can legally take the action and reasons for failure if not.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Pure",
+  "x-sfs-effects": [],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["actor", "action_id"],
+      "additionalProperties": false,
+      "properties": {
+        "actor": { "$ref": "_common.json#/$defs/EntityId" },
+        "action_id": { "$ref": "_common.json#/$defs/ActionId" },
+        "targets": { "type": "array", "items": { "$ref": "_common.json#/$defs/Target" } }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "reasons": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

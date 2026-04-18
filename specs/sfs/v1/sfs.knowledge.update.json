@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.knowledge.update.json",
+  "title": "sfs.knowledge.update",
+  "description": "Update a knowing entity's view of another entity (fog of war, stealth, identification).",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["ComponentSet"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["knower", "target", "level"],
+      "additionalProperties": false,
+      "properties": {
+        "knower": { "$ref": "_common.json#/$defs/EntityId" },
+        "target": { "$ref": "_common.json#/$defs/EntityId" },
+        "level": { "$ref": "_common.json#/$defs/KnowledgeLevel" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["previous", "current"],
+      "properties": {
+        "previous": { "$ref": "_common.json#/$defs/KnowledgeLevel" },
+        "current": { "$ref": "_common.json#/$defs/KnowledgeLevel" }
+      }
+    }
+  }
+}

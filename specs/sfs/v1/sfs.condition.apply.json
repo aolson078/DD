@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.condition.apply.json",
+  "title": "sfs.condition.apply",
+  "description": "Apply a pack-defined condition to a target. Instantiates the condition's PersistentEffectTemplate.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["PersistentEffectApplied"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["target", "condition_id"],
+      "additionalProperties": false,
+      "properties": {
+        "target": { "$ref": "_common.json#/$defs/EntityId" },
+        "condition_id": { "$ref": "_common.json#/$defs/ConditionId" },
+        "source": { "$ref": "_common.json#/$defs/EntityId" },
+        "duration": { "$ref": "_common.json#/$defs/Duration" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effect_id"],
+      "properties": {
+        "effect_id": { "$ref": "_common.json#/$defs/PersistentEffectInstanceId" },
+        "replaced_existing": { "type": "boolean" }
+      }
+    }
+  }
+}

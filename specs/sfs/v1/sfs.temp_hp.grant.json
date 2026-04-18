@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.temp_hp.grant.json",
+  "title": "sfs.temp_hp.grant",
+  "description": "Grant temporary HP. Installs a persistent effect with a TempHP transformer that absorbs damage before real HP. Does not stack; higher value wins.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["PersistentEffectApplied", "ResourceChanged"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["source", "target", "amount"],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "$ref": "_common.json#/$defs/EntityId" },
+        "target": { "$ref": "_common.json#/$defs/EntityId" },
+        "amount": { "type": "integer", "minimum": 1 },
+        "duration": { "$ref": "_common.json#/$defs/Duration" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["granted", "previous_temp_hp"],
+      "properties": {
+        "granted": { "type": "integer", "minimum": 0 },
+        "previous_temp_hp": { "type": "integer", "minimum": 0 },
+        "effect_id": { "$ref": "_common.json#/$defs/PersistentEffectInstanceId" }
+      }
+    }
+  }
+}

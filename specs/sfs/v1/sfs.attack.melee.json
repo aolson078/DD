@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.attack.melee.json",
+  "title": "sfs.attack.melee",
+  "description": "Resolve a melee attack: to-hit roll, crit check, damage roll. Pushes damage onto the effect stack. See specs/05 Section 6.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["RollMade", "AttackResolved", "EffectPushed"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["attacker", "defender"],
+      "additionalProperties": false,
+      "properties": {
+        "attacker": { "$ref": "_common.json#/$defs/EntityId" },
+        "defender": { "$ref": "_common.json#/$defs/EntityId" },
+        "weapon_item": { "$ref": "_common.json#/$defs/ItemInstanceId" },
+        "additional_modifiers": { "type": "array", "items": { "$ref": "_common.json#/$defs/Modifier" } }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hit", "crit", "roll"],
+      "properties": {
+        "roll": { "$ref": "_common.json#/$defs/RollResult" },
+        "hit": { "type": "boolean" },
+        "crit": { "type": "boolean" },
+        "damage": { "$ref": "_common.json#/$defs/DamageInstance" }
+      }
+    }
+  }
+}

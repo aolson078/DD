@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/_index.json",
+  "title": "SFS v1 Registry Index",
+  "description": "Machine-readable catalog of all Standard Function Set v1 functions. Maps SfsFunctionId to metadata. See specs/04 Section 4-5.",
+  "type": "object",
+  "required": ["version", "functions"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "const": "1.0.0" },
+    "total": { "const": 44 },
+    "functions": {
+      "type": "object",
+      "additionalProperties": false,
+      "propertyNames": { "$ref": "_common.json#/$defs/SfsFunctionId" },
+      "properties": {
+        "sfs.roll.d20":                { "$ref": "#/$defs/entry" },
+        "sfs.roll.generic":            { "$ref": "#/$defs/entry" },
+        "sfs.roll.initiative":         { "$ref": "#/$defs/entry" },
+        "sfs.roll.hit_die":            { "$ref": "#/$defs/entry" },
+        "sfs.roll.table":              { "$ref": "#/$defs/entry" },
+        "sfs.check.skill":             { "$ref": "#/$defs/entry" },
+        "sfs.check.contested":         { "$ref": "#/$defs/entry" },
+        "sfs.save.ability":            { "$ref": "#/$defs/entry" },
+        "sfs.save.concentration":      { "$ref": "#/$defs/entry" },
+        "sfs.save.death":              { "$ref": "#/$defs/entry" },
+        "sfs.attack.melee":            { "$ref": "#/$defs/entry" },
+        "sfs.attack.ranged":           { "$ref": "#/$defs/entry" },
+        "sfs.attack.spell":            { "$ref": "#/$defs/entry" },
+        "sfs.damage.typed":            { "$ref": "#/$defs/entry" },
+        "sfs.damage.from_effect":      { "$ref": "#/$defs/entry" },
+        "sfs.crit.check":              { "$ref": "#/$defs/entry" },
+        "sfs.heal.flat":               { "$ref": "#/$defs/entry" },
+        "sfs.heal.dice":               { "$ref": "#/$defs/entry" },
+        "sfs.temp_hp.grant":           { "$ref": "#/$defs/entry" },
+        "sfs.resource.spend":          { "$ref": "#/$defs/entry" },
+        "sfs.resource.grant":          { "$ref": "#/$defs/entry" },
+        "sfs.resource.set_max":        { "$ref": "#/$defs/entry" },
+        "sfs.condition.apply":         { "$ref": "#/$defs/entry" },
+        "sfs.condition.remove":        { "$ref": "#/$defs/entry" },
+        "sfs.effect.apply_persistent": { "$ref": "#/$defs/entry" },
+        "sfs.effect.remove_persistent":{ "$ref": "#/$defs/entry" },
+        "sfs.effect.dispel":           { "$ref": "#/$defs/entry" },
+        "sfs.move.to_zone":            { "$ref": "#/$defs/entry" },
+        "sfs.move.to_offset":          { "$ref": "#/$defs/entry" },
+        "sfs.move.force":              { "$ref": "#/$defs/entry" },
+        "sfs.position.teleport":       { "$ref": "#/$defs/entry" },
+        "sfs.position.line_of_sight":  { "$ref": "#/$defs/entry" },
+        "sfs.knowledge.update":        { "$ref": "#/$defs/entry" },
+        "sfs.visibility.compute":      { "$ref": "#/$defs/entry" },
+        "sfs.action.can_take":         { "$ref": "#/$defs/entry" },
+        "sfs.action.spend_economy":    { "$ref": "#/$defs/entry" },
+        "sfs.reaction.offer":          { "$ref": "#/$defs/entry" },
+        "sfs.rest.short":              { "$ref": "#/$defs/entry" },
+        "sfs.rest.long":               { "$ref": "#/$defs/entry" },
+        "sfs.time.advance":            { "$ref": "#/$defs/entry" },
+        "sfs.xp.award":                { "$ref": "#/$defs/entry" },
+        "sfs.progression.check":       { "$ref": "#/$defs/entry" },
+        "sfs.progression.apply_level": { "$ref": "#/$defs/entry" },
+        "sfs.scene.instantiate":       { "$ref": "#/$defs/entry" }
+      }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "required": ["since", "purity", "effects", "doc", "schema_file"],
+      "additionalProperties": false,
+      "properties": {
+        "since": { "type": "string" },
+        "purity": { "type": "string", "enum": ["Pure", "Stateful"] },
+        "effects": { "type": "array", "items": { "type": "string" } },
+        "doc": { "type": "string" },
+        "schema_file": { "type": "string" }
+      }
+    }
+  }
+}

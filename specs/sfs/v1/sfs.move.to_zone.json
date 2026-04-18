@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.move.to_zone.json",
+  "title": "sfs.move.to_zone",
+  "description": "Move an entity to a zone. Pays movement resource, checks adjacency, triggers opportunity attacks.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["ComponentSet", "ResourceChanged", "ReactionOffered"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["entity", "zone_id"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": { "$ref": "_common.json#/$defs/EntityId" },
+        "zone_id": { "$ref": "_common.json#/$defs/ZoneId" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["moved", "from_zone", "to_zone"],
+      "properties": {
+        "moved": { "type": "boolean" },
+        "from_zone": { "$ref": "_common.json#/$defs/ZoneId" },
+        "to_zone": { "$ref": "_common.json#/$defs/ZoneId" },
+        "movement_spent": { "type": "integer", "minimum": 0 },
+        "opportunity_attacks_triggered": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}
