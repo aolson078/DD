@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0.0",
+  "sfs_version": "1.0.0",
+  "pack_ids": ["srd-5e-lite"],
+  "entities": {
+    "1": {
+      "id": 1,
+      "name": "Commoner",
+      "components": {
+        "stats": {
+          "scores": {"STR": 10, "DEX": 10, "CON": 10, "INT": 10, "WIS": 10, "CHA": 10},
+          "proficiencies": [],
+          "derived": {"armor_class": 10}
+        },
+        "resources": {
+          "hp": {"current": 4, "maximum": 4, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "arena", "zone_id": "zone_a", "offset": null, "facing": null},
+        "controller": {"type": "Player", "player_id": "player1"},
+        "persistent_effects": []
+      }
+    },
+    "2": {
+      "id": 2,
+      "name": "Fire Giant",
+      "components": {
+        "stats": {
+          "scores": {"STR": 25, "DEX": 9, "CON": 23, "INT": 10, "WIS": 14, "CHA": 13},
+          "proficiencies": ["greatsword"],
+          "derived": {"armor_class": 18, "attack_bonus": 11}
+        },
+        "resources": {
+          "hp": {"current": 162, "maximum": 162, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "arena", "zone_id": "zone_a", "offset": null, "facing": null},
+        "controller": {"type": "DriverOwned"},
+        "persistent_effects": []
+      }
+    }
+  },
+  "scenes": {
+    "arena": {
+      "id": "arena",
+      "zones": {
+        "zone_a": {"id": "zone_a", "tags": []}
+      },
+      "mode": "Combat"
+    }
+  },
+  "active_scene": "arena",
+  "stack": [],
+  "clocks": {"round": 1, "turn": 0},
+  "next_entity_id": 3,
+  "next_effect_id": 1,
+  "next_request_id": 1,
+  "rng": {"seed": [1, 2, 3, 4]},
+  "rng_policy": "EngineOnly",
+  "event_log_hash_so_far": "0000000000000000000000000000000000000000000000000000000000000000",
+  "open_continuation": null,
+  "recoverable_retry_count": 0,
+  "max_recoverable_retries": 3
+}

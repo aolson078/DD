@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "sfs_version": "1.0.0",
+  "pack_ids": ["broken-pack"],
+  "entities": {},
+  "scenes": {},
+  "active_scene": null,
+  "stack": [],
+  "clocks": {},
+  "next_entity_id": 1,
+  "next_effect_id": 1,
+  "next_request_id": 1,
+  "rng": {"seed": [1, 2, 3, 4]},
+  "rng_policy": "EngineOnly",
+  "event_log_hash_so_far": "0000000000000000000000000000000000000000000000000000000000000000",
+  "open_continuation": null,
+  "recoverable_retry_count": 0,
+  "max_recoverable_retries": 3
+}

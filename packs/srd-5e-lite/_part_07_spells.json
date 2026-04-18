@@ -1,0 +1,124 @@
+{
+  "spells": [
+    {
+      "id": "fire_bolt",
+      "display_name": "Fire Bolt",
+      "level": 0,
+      "school": "evocation",
+      "casting_time": "Action",
+      "range": { "Feet": 120 },
+      "components": {
+        "verbal": true,
+        "somatic": true,
+        "material": null,
+        "consumed": false
+      },
+      "duration": { "Rounds": 0 },
+      "concentration": false,
+      "ritual": false,
+      "effects": ["fire_bolt_damage"],
+      "attack_type": "ranged",
+      "classes": ["fighter"],
+      "tags": ["cantrip", "damage"]
+    },
+    {
+      "id": "burning_hands",
+      "display_name": "Burning Hands",
+      "level": 1,
+      "school": "evocation",
+      "casting_time": "Action",
+      "range": "Self",
+      "components": {
+        "verbal": true,
+        "somatic": true,
+        "material": null,
+        "consumed": false
+      },
+      "duration": { "Rounds": 0 },
+      "concentration": false,
+      "ritual": false,
+      "effects": ["burning_hands_damage"],
+      "save": "dex_save",
+      "area": { "shape": "cone", "size": 15 },
+      "classes": ["fighter"],
+      "tags": ["damage", "aoe"]
+    },
+    {
+      "id": "shield",
+      "display_name": "Shield",
+      "level": 1,
+      "school": "abjuration",
+      "casting_time": "Reaction",
+      "range": "Self",
+      "components": {
+        "verbal": true,
+        "somatic": true,
+        "material": null,
+        "consumed": false
+      },
+      "duration": { "Rounds": 1 },
+      "concentration": false,
+      "ritual": false,
+      "effects": ["shield_ac_bonus"],
+      "classes": ["fighter"],
+      "tags": ["defense"]
+    },
+    {
+      "id": "cure_wounds",
+      "display_name": "Cure Wounds",
+      "level": 1,
+      "school": "evocation",
+      "casting_time": "Action",
+      "range": "Touch",
+      "components": {
+        "verbal": true,
+        "somatic": true,
+        "material": null,
+        "consumed": false
+      },
+      "duration": { "Rounds": 0 },
+      "concentration": false,
+      "ritual": false,
+      "effects": ["cure_wounds_heal"],
+      "scaling": {
+        "mode": "per_slot_above_base",
+        "base_level": 1,
+        "per_level_extra": [
+          { "expression": "1d8", "type": "radiant" }
+        ]
+      },
+      "classes": ["fighter"],
+      "tags": ["healing"]
+    },
+    {
+      "id": "fireball",
+      "display_name": "Fireball",
+      "level": 3,
+      "school": "evocation",
+      "casting_time": "Action",
+      "range": { "Feet": 150 },
+      "components": {
+        "verbal": true,
+        "somatic": true,
+        "material": "a tiny ball of bat guano and sulfur",
+        "material_cost_gp": 0,
+        "consumed": true
+      },
+      "duration": { "Rounds": 0 },
+      "concentration": false,
+      "ritual": false,
+      "effects": ["fireball_damage"],
+      "save": "dex_save",
+      "area": { "shape": "sphere", "size": 20 },
+      "scaling": {
+        "mode": "per_slot_above_base",
+        "base_level": 3,
+        "per_level_extra": [
+          { "expression": "1d6", "type": "fire" }
+        ]
+      },
+      "classes": ["fighter"],
+      "tags": ["damage", "aoe"]
+    }
+  ]
+}

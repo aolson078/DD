@@ -1,0 +1,16 @@
+[
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 1}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 1}},
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 2}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 2}},
+  {"kind": "RollMade", "key_fields": {"purpose": "HitDice"}},
+  {"kind": "ResourceChanged", "key_fields": {"entity": 1, "resource": "hit_dice_d10", "delta": -1}},
+  {"kind": "ResourceChanged", "key_fields": {"entity": 1, "resource": "hp"}},
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 3}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 3}},
+  {"kind": "RollMade", "key_fields": {"purpose": "HitDice"}},
+  {"kind": "ResourceChanged", "key_fields": {"entity": 1, "resource": "hit_dice_d10", "delta": -1}},
+  {"kind": "ResourceChanged", "key_fields": {"entity": 1, "resource": "hp"}},
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 4}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 4}}
+]

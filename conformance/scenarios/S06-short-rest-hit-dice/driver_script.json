@@ -1,0 +1,30 @@
+[
+  {
+    "request_id": 1,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "initiate_short_rest"}
+    }
+  },
+  {
+    "request_id": 2,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "spend_hit_die", "die": "hit_dice_d10"}
+    }
+  },
+  {
+    "request_id": 3,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "spend_hit_die", "die": "hit_dice_d10"}
+    }
+  },
+  {
+    "request_id": 4,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "finish_rest"}
+    }
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "request_id": 1,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "attack_greataxe", "target": 1}
+    }
+  }
+]

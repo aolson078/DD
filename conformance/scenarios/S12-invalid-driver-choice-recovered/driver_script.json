@@ -1,0 +1,16 @@
+[
+  {
+    "request_id": 1,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "cast_fireball_INVALID"}
+    }
+  },
+  {
+    "request_id": 2,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "attack_longsword", "target": 2}
+    }
+  }
+]

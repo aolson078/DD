@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0.0",
+  "sfs_version": "1.0.0",
+  "pack_ids": ["srd-5e-lite"],
+  "entities": {
+    "1": {
+      "id": 1,
+      "name": "Cleric",
+      "components": {
+        "stats": {
+          "scores": {"STR": 14, "DEX": 10, "CON": 12, "INT": 10, "WIS": 18, "CHA": 12},
+          "proficiencies": ["religion"],
+          "derived": {}
+        },
+        "resources": {
+          "hp": {"current": 30, "maximum": 30, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "arena", "zone_id": "zone_a", "offset": null, "facing": null},
+        "controller": {"type": "Player", "player_id": "player1"},
+        "persistent_effects": [
+          {
+            "id": 100,
+            "template_id": "shield_of_faith",
+            "source": 1,
+            "target": 1,
+            "concentration": true,
+            "modifiers": [{"type": "Bonus", "value": 2, "applies_to": ["armor_class"]}],
+            "expiry": {"type": "TimeElapsed", "clock": "round", "amount": 10},
+            "applied_at_clock": {"round": 1}
+          }
+        ]
+      }
+    }
+  },
+  "scenes": {
+    "arena": {
+      "id": "arena",
+      "zones": {
+        "zone_a": {"id": "zone_a", "tags": []}
+      },
+      "mode": "Combat"
+    }
+  },
+  "active_scene": "arena",
+  "stack": [],
+  "clocks": {"round": 1, "turn": 0},
+  "next_entity_id": 2,
+  "next_effect_id": 101,
+  "next_request_id": 1,
+  "rng": {"seed": [1, 2, 3, 4]},
+  "rng_policy": "EngineOnly",
+  "event_log_hash_so_far": "0000000000000000000000000000000000000000000000000000000000000000",
+  "open_continuation": null,
+  "recoverable_retry_count": 0,
+  "max_recoverable_retries": 3
+}

@@ -1,0 +1,8 @@
+[
+  {"kind": "TurnStarted", "key_fields": {"entity": 2, "round": 1}},
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 1}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 1}},
+  {"kind": "PersistentEffectApplied", "key_fields": {"target": 3, "template_id": "aura_of_protection", "source": 2}},
+  {"kind": "PersistentEffectRemoved", "key_fields": {"target": 3, "instance_id": 101, "reason": "AntiStackTriggered"}},
+  {"kind": "TurnEnded", "key_fields": {"entity": 2}}
+]

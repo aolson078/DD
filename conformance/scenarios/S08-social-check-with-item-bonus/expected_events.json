@@ -1,0 +1,6 @@
+[
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 1}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 1}},
+  {"kind": "RollMade", "key_fields": {"purpose": "Check", "check_id": "persuasion"}},
+  {"kind": "CheckResolved", "key_fields": {"actor": 1, "check": "persuasion"}}
+]

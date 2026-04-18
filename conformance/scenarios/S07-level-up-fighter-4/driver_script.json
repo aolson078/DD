@@ -1,0 +1,23 @@
+[
+  {
+    "request_id": 1,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "initiate_level_up", "class": "fighter"}
+    }
+  },
+  {
+    "request_id": 2,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "asi", "stat": "STR", "increase": 2}
+    }
+  },
+  {
+    "request_id": 3,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "confirm_hp_roll"}
+    }
+  }
+]

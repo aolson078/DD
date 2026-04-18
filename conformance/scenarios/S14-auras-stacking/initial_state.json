@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0.0",
+  "sfs_version": "1.0.0",
+  "pack_ids": ["srd-5e-lite"],
+  "entities": {
+    "1": {
+      "id": 1,
+      "name": "Paladin A",
+      "components": {
+        "stats": {
+          "scores": {"STR": 16, "DEX": 10, "CON": 14, "INT": 10, "WIS": 12, "CHA": 16},
+          "proficiencies": ["athletics", "religion"],
+          "derived": {"cha_modifier": 3}
+        },
+        "resources": {
+          "hp": {"current": 40, "maximum": 40, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "battlefield", "zone_id": "zone_center", "offset": null, "facing": null},
+        "controller": {"type": "Player", "player_id": "player1"},
+        "persistent_effects": [
+          {
+            "id": 100,
+            "template_id": "aura_of_protection",
+            "source": 1,
+            "target": 1,
+            "aura": {"radius": 10, "zone_id": "zone_center"},
+            "modifiers": [{"type": "Bonus", "value": 3, "applies_to": ["save"]}],
+            "anti_stack": {"tag": "aura_of_protection", "priority": "first"},
+            "expiry": null
+          }
+        ]
+      }
+    },
+    "2": {
+      "id": 2,
+      "name": "Paladin B",
+      "components": {
+        "stats": {
+          "scores": {"STR": 16, "DEX": 10, "CON": 14, "INT": 10, "WIS": 12, "CHA": 14},
+          "proficiencies": ["athletics", "religion"],
+          "derived": {"cha_modifier": 2}
+        },
+        "resources": {
+          "hp": {"current": 38, "maximum": 38, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "battlefield", "zone_id": "zone_north", "offset": null, "facing": null},
+        "controller": {"type": "Player", "player_id": "player2"},
+        "persistent_effects": [
+          {
+            "id": 101,
+            "template_id": "aura_of_protection",
+            "source": 2,
+            "target": 2,
+            "aura": {"radius": 10, "zone_id": "zone_north"},
+            "modifiers": [{"type": "Bonus", "value": 2, "applies_to": ["save"]}],
+            "anti_stack": {"tag": "aura_of_protection", "priority": "first"},
+            "expiry": null
+          }
+        ]
+      }
+    },
+    "3": {
+      "id": 3,
+      "name": "Ally",
+      "components": {
+        "stats": {
+          "scores": {"STR": 10, "DEX": 14, "CON": 12, "INT": 10, "WIS": 10, "CHA": 10},
+          "proficiencies": [],
+          "derived": {}
+        },
+        "resources": {
+          "hp": {"current": 20, "maximum": 20, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "battlefield", "zone_id": "zone_center", "offset": null, "facing": null},
+        "controller": {"type": "Player", "player_id": "player3"},
+        "persistent_effects": []
+      }
+    }
+  },
+  "scenes": {
+    "battlefield": {
+      "id": "battlefield",
+      "zones": {
+        "zone_center": {"id": "zone_center", "tags": []},
+        "zone_north": {"id": "zone_north", "tags": []}
+      },
+      "mode": "Combat"
+    }
+  },
+  "active_scene": "battlefield",
+  "stack": [],
+  "clocks": {"round": 1, "turn": 0},
+  "next_entity_id": 4,
+  "next_effect_id": 102,
+  "next_request_id": 1,
+  "rng": {"seed": [1, 2, 3, 4]},
+  "rng_policy": "EngineOnly",
+  "event_log_hash_so_far": "0000000000000000000000000000000000000000000000000000000000000000",
+  "open_continuation": null,
+  "recoverable_retry_count": 0,
+  "max_recoverable_retries": 3
+}

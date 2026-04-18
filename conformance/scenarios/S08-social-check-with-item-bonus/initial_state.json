@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0.0",
+  "sfs_version": "1.0.0",
+  "pack_ids": ["srd-5e-lite"],
+  "entities": {
+    "1": {
+      "id": 1,
+      "name": "Bard",
+      "components": {
+        "stats": {
+          "scores": {"STR": 8, "DEX": 14, "CON": 12, "INT": 12, "WIS": 10, "CHA": 18},
+          "proficiencies": ["persuasion", "performance", "deception"],
+          "derived": {"proficiency_bonus": 3, "cha_modifier": 4, "persuasion_bonus": 7}
+        },
+        "resources": {
+          "hp": {"current": 32, "maximum": 32, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "inventory": {
+          "items": [
+            {
+              "id": 201,
+              "template_id": "instrument_of_charisma",
+              "charges": null,
+              "tags": ["focus", "charisma_bonus"]
+            }
+          ],
+          "equipped": {"main_hand": 201},
+          "attunements": [201]
+        },
+        "position": {"scene_id": "tavern", "zone_id": "common_room", "offset": null, "facing": null},
+        "controller": {"type": "Player", "player_id": "player1"},
+        "persistent_effects": [
+          {
+            "id": 100,
+            "template_id": "bardic_inspiration",
+            "source": 1,
+            "target": 1,
+            "modifiers": [{"type": "Bonus", "value": "1d8", "applies_to": ["check"]}],
+            "expiry": {"type": "OnUse", "uses": 1}
+          }
+        ]
+      }
+    },
+    "2": {
+      "id": 2,
+      "name": "Merchant",
+      "components": {
+        "stats": {
+          "scores": {"STR": 10, "DEX": 10, "CON": 10, "INT": 12, "WIS": 14, "CHA": 12},
+          "proficiencies": ["insight"],
+          "derived": {"insight_bonus": 4}
+        },
+        "resources": {
+          "hp": {"current": 10, "maximum": 10, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "tavern", "zone_id": "common_room", "offset": null, "facing": null},
+        "controller": {"type": "DriverOwned"},
+        "persistent_effects": []
+      }
+    }
+  },
+  "scenes": {
+    "tavern": {
+      "id": "tavern",
+      "zones": {
+        "common_room": {"id": "common_room", "tags": ["social"]}
+      },
+      "mode": "Social"
+    }
+  },
+  "active_scene": "tavern",
+  "stack": [],
+  "clocks": {"round": 0},
+  "next_entity_id": 3,
+  "next_effect_id": 101,
+  "next_request_id": 1,
+  "rng": {"seed": [1, 2, 3, 4]},
+  "rng_policy": "EngineOnly",
+  "event_log_hash_so_far": "0000000000000000000000000000000000000000000000000000000000000000",
+  "open_continuation": null,
+  "recoverable_retry_count": 0,
+  "max_recoverable_retries": 3
+}

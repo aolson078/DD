@@ -1,0 +1,9 @@
+[
+  {
+    "request_id": 1,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "cast_fireball", "target_zone": "zone_blast", "slot_level": 3}
+    }
+  }
+]

@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "sfs_version": "1.0.0",
+  "pack_ids": ["srd-5e-lite"],
+  "entities": {
+    "1": {
+      "id": 1,
+      "name": "Ranger",
+      "components": {
+        "stats": {
+          "scores": {"STR": 14, "DEX": 16, "CON": 12, "INT": 10, "WIS": 14, "CHA": 8},
+          "proficiencies": ["perception", "stealth", "survival"],
+          "derived": {"initiative_bonus": 3, "passive_perception": 14, "speed": 30}
+        },
+        "resources": {
+          "hp": {"current": 35, "maximum": 35, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "forest_path", "zone_id": "zone_a", "offset": null, "facing": null},
+        "controller": {"type": "Player", "player_id": "player1"},
+        "persistent_effects": []
+      }
+    },
+    "2": {
+      "id": 2,
+      "name": "Ambusher Goblin",
+      "components": {
+        "stats": {
+          "scores": {"STR": 8, "DEX": 14, "CON": 10, "INT": 10, "WIS": 8, "CHA": 8},
+          "proficiencies": ["stealth"],
+          "derived": {"initiative_bonus": 2, "stealth_bonus": 6}
+        },
+        "resources": {
+          "hp": {"current": 7, "maximum": 7, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "forest_path", "zone_id": "zone_b", "offset": null, "facing": null},
+        "controller": {"type": "DriverOwned"},
+        "persistent_effects": [],
+        "knowledge": {
+          "known_entities": {},
+          "seen_events": []
+        }
+      }
+    }
+  },
+  "scenes": {
+    "forest_path": {
+      "id": "forest_path",
+      "zones": {
+        "zone_a": {"id": "zone_a", "tags": []},
+        "zone_b": {"id": "zone_b", "tags": ["ambush_trigger"]}
+      },
+      "mode": "Exploration"
+    }
+  },
+  "active_scene": "forest_path",
+  "stack": [],
+  "clocks": {"round": 0},
+  "next_entity_id": 3,
+  "next_effect_id": 1,
+  "next_request_id": 1,
+  "rng": {"seed": [1, 2, 3, 4]},
+  "rng_policy": "EngineOnly",
+  "event_log_hash_so_far": "0000000000000000000000000000000000000000000000000000000000000000",
+  "open_continuation": null,
+  "recoverable_retry_count": 0,
+  "max_recoverable_retries": 3
+}

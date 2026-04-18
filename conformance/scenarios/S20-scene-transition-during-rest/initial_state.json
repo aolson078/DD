@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0.0",
+  "sfs_version": "1.0.0",
+  "pack_ids": ["srd-5e-lite"],
+  "entities": {
+    "1": {
+      "id": 1,
+      "name": "Ranger",
+      "components": {
+        "stats": {
+          "scores": {"STR": 14, "DEX": 16, "CON": 12, "INT": 10, "WIS": 14, "CHA": 8},
+          "proficiencies": ["survival", "perception"],
+          "derived": {"level": 3}
+        },
+        "resources": {
+          "hp": {"current": 18, "maximum": 28, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []},
+          "spell_slots_1": {"current": 0, "maximum": 3, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "forest_camp", "zone_id": "campsite", "offset": null, "facing": null},
+        "controller": {"type": "Player", "player_id": "player1"},
+        "persistent_effects": []
+      }
+    }
+  },
+  "scenes": {
+    "forest_camp": {
+      "id": "forest_camp",
+      "zones": {
+        "campsite": {"id": "campsite", "tags": ["safe"]}
+      },
+      "mode": "Downtime"
+    },
+    "mountain_pass": {
+      "id": "mountain_pass",
+      "zones": {
+        "trailhead": {"id": "trailhead", "tags": []}
+      },
+      "mode": "Exploration"
+    }
+  },
+  "active_scene": "forest_camp",
+  "stack": [],
+  "clocks": {"round": 0, "hour": 0},
+  "next_entity_id": 2,
+  "next_effect_id": 1,
+  "next_request_id": 1,
+  "rng": {"seed": [1, 2, 3, 4]},
+  "rng_policy": "EngineOnly",
+  "event_log_hash_so_far": "0000000000000000000000000000000000000000000000000000000000000000",
+  "open_continuation": null,
+  "recoverable_retry_count": 0,
+  "max_recoverable_retries": 3
+}

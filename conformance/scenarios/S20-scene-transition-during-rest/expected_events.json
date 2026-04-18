@@ -1,0 +1,11 @@
+[
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 1}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 1}},
+  {"kind": "ResourceChanged", "key_fields": {"entity": 1, "resource": "hp", "new_current": 28}},
+  {"kind": "ResourceChanged", "key_fields": {"entity": 1, "resource": "spell_slots_1", "new_current": 3}},
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 2}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 2}},
+  {"kind": "SceneExited", "key_fields": {"scene": "forest_camp"}},
+  {"kind": "SceneEntered", "key_fields": {"scene": "mountain_pass"}},
+  {"kind": "ModeChanged", "key_fields": {"from": "Downtime", "to": "Exploration"}}
+]

@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0.0",
+  "sfs_version": "1.0.0",
+  "pack_ids": ["srd-5e-lite"],
+  "entities": {
+    "1": {
+      "id": 1,
+      "name": "Fighter",
+      "components": {
+        "stats": {
+          "scores": {"STR": 16, "DEX": 12, "CON": 14, "INT": 10, "WIS": 12, "CHA": 8},
+          "proficiencies": ["athletics"],
+          "derived": {"armor_class": 18}
+        },
+        "resources": {
+          "hp": {"current": 30, "maximum": 44, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []},
+          "temp_hp": {"current": 5, "maximum": 999, "recovery": {"type": "Manual"}, "tags": ["temp_hp"]}
+        },
+        "position": {"scene_id": "arena", "zone_id": "zone_a", "offset": null, "facing": null},
+        "controller": {"type": "Player", "player_id": "player1"},
+        "persistent_effects": [
+          {
+            "id": 100,
+            "template_id": "temp_hp_grant",
+            "source": 1,
+            "target": 1,
+            "transformers": [{"type": "TempHP", "pool": "temp_hp"}],
+            "expiry": null
+          }
+        ]
+      }
+    },
+    "2": {
+      "id": 2,
+      "name": "Orc",
+      "components": {
+        "stats": {
+          "scores": {"STR": 16, "DEX": 12, "CON": 16, "INT": 7, "WIS": 11, "CHA": 10},
+          "proficiencies": ["greataxe"],
+          "derived": {"armor_class": 13, "attack_bonus": 5}
+        },
+        "resources": {
+          "hp": {"current": 15, "maximum": 15, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []}
+        },
+        "position": {"scene_id": "arena", "zone_id": "zone_a", "offset": null, "facing": null},
+        "controller": {"type": "DriverOwned"},
+        "persistent_effects": []
+      }
+    }
+  },
+  "scenes": {
+    "arena": {
+      "id": "arena",
+      "zones": {
+        "zone_a": {"id": "zone_a", "tags": []}
+      },
+      "mode": "Combat"
+    }
+  },
+  "active_scene": "arena",
+  "stack": [],
+  "clocks": {"round": 1, "turn": 0},
+  "next_entity_id": 3,
+  "next_effect_id": 101,
+  "next_request_id": 1,
+  "rng": {"seed": [1, 2, 3, 4]},
+  "rng_policy": "EngineOnly",
+  "event_log_hash_so_far": "0000000000000000000000000000000000000000000000000000000000000000",
+  "open_continuation": null,
+  "recoverable_retry_count": 0,
+  "max_recoverable_retries": 3
+}

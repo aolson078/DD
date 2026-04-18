@@ -1,0 +1,9 @@
+[
+  {
+    "request_id": 1,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "cast_summon", "summon_template": "wolf_spirit", "target_zone": "zone_a"}
+    }
+  }
+]

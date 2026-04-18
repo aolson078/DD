@@ -1,0 +1,13 @@
+[
+  {"kind": "ClockTicked", "key_fields": {"clock": "round", "by": 1}},
+  {"kind": "ClockTicked", "key_fields": {"clock": "round", "by": 1}},
+  {"kind": "ClockTicked", "key_fields": {"clock": "round", "by": 1}},
+  {"kind": "ClockTicked", "key_fields": {"clock": "round", "by": 1}},
+  {"kind": "ClockTicked", "key_fields": {"clock": "round", "by": 1}},
+  {"kind": "ClockTicked", "key_fields": {"clock": "round", "by": 1}},
+  {"kind": "ClockTicked", "key_fields": {"clock": "round", "by": 1}},
+  {"kind": "ClockTicked", "key_fields": {"clock": "round", "by": 1}},
+  {"kind": "ClockTicked", "key_fields": {"clock": "round", "by": 1}},
+  {"kind": "ClockTicked", "key_fields": {"clock": "round", "by": 1}},
+  {"kind": "PersistentEffectRemoved", "key_fields": {"target": 1, "instance_id": 100, "reason": "TimeExpired"}}
+]

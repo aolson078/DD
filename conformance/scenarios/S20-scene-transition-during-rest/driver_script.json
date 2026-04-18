@@ -1,0 +1,16 @@
+[
+  {
+    "request_id": 1,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "initiate_long_rest"}
+    }
+  },
+  {
+    "request_id": 2,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "travel_to", "destination_scene": "mountain_pass"}
+    }
+  }
+]

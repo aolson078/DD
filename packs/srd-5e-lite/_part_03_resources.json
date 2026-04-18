@@ -1,0 +1,149 @@
+{
+  "resources": [
+    {
+      "id": "hp",
+      "display_name": "HP",
+      "default_maximum": 10,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "long_rest",
+          "amount": "Full"
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "hit_dice",
+      "display_name": "Hit Dice",
+      "default_maximum": 1,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "long_rest",
+          "amount": {
+            "Fraction": {
+              "numerator": 1,
+              "denominator": 2
+            }
+          }
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "spell_slots_1",
+      "display_name": "Spell Slots 1",
+      "default_maximum": 0,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "long_rest",
+          "amount": "Full"
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "spell_slots_2",
+      "display_name": "Spell Slots 2",
+      "default_maximum": 0,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "long_rest",
+          "amount": "Full"
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "spell_slots_3",
+      "display_name": "Spell Slots 3",
+      "default_maximum": 0,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "long_rest",
+          "amount": "Full"
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "xp",
+      "display_name": "XP",
+      "default_maximum": 999999,
+      "recovery": "Manual",
+      "tags": []
+    },
+    {
+      "id": "action_surge",
+      "display_name": "Action Surge",
+      "default_maximum": 0,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "short_rest",
+          "amount": "Full"
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "second_wind",
+      "display_name": "Second Wind",
+      "default_maximum": 0,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "short_rest",
+          "amount": "Full"
+        }
+      },
+      "tags": []
+    }
+  ],
+  "clocks": [
+    {
+      "id": "round",
+      "display_name": "Round",
+      "unit": "round"
+    },
+    {
+      "id": "minute",
+      "display_name": "Minute",
+      "unit": "minute"
+    },
+    {
+      "id": "hour",
+      "display_name": "Hour",
+      "unit": "hour"
+    },
+    {
+      "id": "day",
+      "display_name": "Day",
+      "unit": "day"
+    }
+  ],
+  "rests": [
+    {
+      "id": "short_rest",
+      "display_name": "Short Rest",
+      "duration": {
+        "Hours": 1
+      },
+      "tags": [
+        "short",
+        "interruptible"
+      ]
+    },
+    {
+      "id": "long_rest",
+      "display_name": "Long Rest",
+      "duration": {
+        "Hours": 8
+      },
+      "tags": [
+        "long",
+        "heals",
+        "recovers_slots",
+        "recovers_hit_dice",
+        "advances_day"
+      ]
+    }
+  ]
+}

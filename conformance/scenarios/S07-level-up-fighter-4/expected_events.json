@@ -1,0 +1,15 @@
+[
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 1}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 1}},
+  {"kind": "LevelUpStarted", "key_fields": {"entity": 1, "class": "fighter", "to_level": 4}},
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 2}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 2}},
+  {"kind": "LevelUpStep", "key_fields": {"entity": 1, "step": "ability_score_increase"}},
+  {"kind": "ComponentSet", "key_fields": {"entity": 1, "type": "stats"}},
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 3}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 3}},
+  {"kind": "RollMade", "key_fields": {"purpose": "HitDice"}},
+  {"kind": "LevelUpStep", "key_fields": {"entity": 1, "step": "hp_increase"}},
+  {"kind": "ResourceChanged", "key_fields": {"entity": 1, "resource": "hp"}},
+  {"kind": "LevelUpCompleted", "key_fields": {"entity": 1, "class": "fighter", "new_level": 4}}
+]

@@ -1,0 +1,8 @@
+[
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 1}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 1}},
+  {"kind": "ModeChanged", "key_fields": {"from": "Exploration", "to": "Combat"}},
+  {"kind": "RollMade", "key_fields": {"purpose": "InitiativeRoll", "actor": 1}},
+  {"kind": "RollMade", "key_fields": {"purpose": "InitiativeRoll", "actor": 2}},
+  {"kind": "TurnStarted", "key_fields": {"round": 1}}
+]

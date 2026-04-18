@@ -1,0 +1,19 @@
+[
+  {"kind": "TurnStarted", "key_fields": {"entity": 1, "round": 1}},
+  {"kind": "DriverRequestEmitted", "key_fields": {"request_id": 1}},
+  {"kind": "DriverResponseRecorded", "key_fields": {"request_id": 1}},
+  {"kind": "ResourceChanged", "key_fields": {"entity": 1, "resource": "spell_slots_3", "delta": -1}},
+  {"kind": "EffectPushed", "key_fields": {"type": "Spell", "name": "fireball"}},
+  {"kind": "RollMade", "key_fields": {"purpose": "Damage", "damage_type": "fire"}},
+  {"kind": "RollMade", "key_fields": {"purpose": "Save", "save_id": "dex"}},
+  {"kind": "SaveResolved", "key_fields": {"target": 2, "save": "dex"}},
+  {"kind": "ResourceChanged", "key_fields": {"entity": 2, "resource": "hp"}},
+  {"kind": "RollMade", "key_fields": {"purpose": "Save", "save_id": "dex"}},
+  {"kind": "SaveResolved", "key_fields": {"target": 3, "save": "dex"}},
+  {"kind": "ResourceChanged", "key_fields": {"entity": 3, "resource": "hp"}},
+  {"kind": "RollMade", "key_fields": {"purpose": "Save", "save_id": "dex"}},
+  {"kind": "SaveResolved", "key_fields": {"target": 4, "save": "dex"}},
+  {"kind": "ResourceChanged", "key_fields": {"entity": 4, "resource": "hp"}},
+  {"kind": "EffectResolved", "key_fields": {}},
+  {"kind": "TurnEnded", "key_fields": {"entity": 1}}
+]

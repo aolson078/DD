@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0.0",
+  "sfs_version": "1.0.0",
+  "pack_ids": ["srd-5e-lite"],
+  "entities": {
+    "1": {
+      "id": 1,
+      "name": "Fighter",
+      "components": {
+        "stats": {
+          "scores": {"STR": 16, "DEX": 12, "CON": 14, "INT": 10, "WIS": 12, "CHA": 8},
+          "proficiencies": ["athletics", "longsword"],
+          "derived": {"con_modifier": 2}
+        },
+        "resources": {
+          "hp": {"current": 20, "maximum": 44, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": "Full"}, "tags": []},
+          "hit_dice_d10": {"current": 4, "maximum": 5, "recovery": {"type": "OnRest", "rest_kind": "long", "amount": {"type": "Fraction", "numerator": 1, "denominator": 2}}, "tags": ["hit_die"]}
+        },
+        "position": {"scene_id": "camp", "zone_id": "campsite", "offset": null, "facing": null},
+        "controller": {"type": "Player", "player_id": "player1"},
+        "persistent_effects": []
+      }
+    }
+  },
+  "scenes": {
+    "camp": {
+      "id": "camp",
+      "zones": {
+        "campsite": {"id": "campsite", "tags": ["safe"]}
+      },
+      "mode": "Downtime"
+    }
+  },
+  "active_scene": "camp",
+  "stack": [],
+  "clocks": {"round": 0, "hour": 0},
+  "next_entity_id": 2,
+  "next_effect_id": 1,
+  "next_request_id": 1,
+  "rng": {"seed": [1, 2, 3, 4]},
+  "rng_policy": "EngineOnly",
+  "event_log_hash_so_far": "0000000000000000000000000000000000000000000000000000000000000000",
+  "open_continuation": null,
+  "recoverable_retry_count": 0,
+  "max_recoverable_retries": 3
+}

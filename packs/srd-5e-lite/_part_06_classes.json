@@ -1,0 +1,121 @@
+{
+  "classes": [
+    {
+      "id": "fighter",
+      "display_name": "Fighter",
+      "hit_die": { "Dn": 10 },
+      "primary_ability": "str",
+      "saving_throw_proficiencies": ["str", "con"],
+      "armor_proficiencies": ["light_armor", "medium_armor", "heavy_armor", "shields"],
+      "weapon_proficiencies": ["simple_weapons", "martial_weapons"],
+      "skill_choices": {
+        "pick": 2,
+        "from": ["acrobatics", "athletics", "intimidation", "perception", "insight", "stealth"]
+      },
+      "starting_equipment": ["chain_mail", "longsword", "shield", "handaxe"],
+      "features": [
+        {
+          "id": "fighting_style",
+          "display_name": "Fighting Style",
+          "level": 1,
+          "grants_actions": [],
+          "grants_triggers": [],
+          "grants_transformers": [],
+          "grants_resources": [],
+          "grants_proficiencies": []
+        },
+        {
+          "id": "second_wind",
+          "display_name": "Second Wind",
+          "level": 1,
+          "grants_actions": ["second_wind"],
+          "grants_triggers": [],
+          "grants_transformers": [],
+          "grants_resources": ["second_wind"],
+          "grants_proficiencies": []
+        },
+        {
+          "id": "action_surge",
+          "display_name": "Action Surge",
+          "level": 2,
+          "grants_actions": ["action_surge"],
+          "grants_triggers": [],
+          "grants_transformers": [],
+          "grants_resources": ["action_surge"],
+          "grants_proficiencies": []
+        },
+        {
+          "id": "extra_attack",
+          "display_name": "Extra Attack",
+          "level": 5,
+          "grants_actions": [],
+          "grants_triggers": ["extra_attack_trigger"],
+          "grants_transformers": [],
+          "grants_resources": [],
+          "grants_proficiencies": []
+        }
+      ],
+      "level_up_steps": [
+        {
+          "id": "hp_increase",
+          "prompt_kind": "ChooseHpMethod",
+          "legal_choices_fn": "sfs.roll.hit_die",
+          "apply_fn": "sfs.resource.set_max"
+        },
+        {
+          "id": "asi_or_feat",
+          "prompt_kind": "ChooseASI",
+          "legal_choices_fn": "sfs.progression.check",
+          "apply_fn": "sfs.progression.apply_level",
+          "at_levels": [4, 6, 8, 12, 14, 16, 19]
+        }
+      ],
+      "tags": ["martial"]
+    }
+  ],
+  "races": [
+    {
+      "id": "human",
+      "display_name": "Human",
+      "size": "Medium",
+      "speed": 30,
+      "ability_score_increases": {
+        "str": 1,
+        "dex": 1,
+        "con": 1,
+        "int": 1,
+        "wis": 1,
+        "cha": 1
+      },
+      "languages": ["common", "choice"],
+      "traits": [
+        {
+          "id": "versatile",
+          "display_name": "Versatile",
+          "grants_proficiencies": ["any_skill"]
+        }
+      ],
+      "tags": []
+    }
+  ],
+  "backgrounds": [
+    {
+      "id": "soldier",
+      "display_name": "Soldier",
+      "skill_proficiencies": ["athletics", "intimidation"],
+      "tool_proficiencies": ["gaming_set", "vehicles_land"],
+      "starting_equipment": ["handaxe"],
+      "tags": []
+    }
+  ],
+  "feats": [
+    {
+      "id": "great_weapon_master",
+      "display_name": "Great Weapon Master",
+      "description": "Take -5 to attack for +10 damage with heavy weapons.",
+      "prerequisites": [],
+      "grants_triggers": ["gwm_bonus_attack"],
+      "tags": ["combat"]
+    }
+  ]
+}

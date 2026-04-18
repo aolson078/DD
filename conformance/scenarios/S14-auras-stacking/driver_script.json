@@ -1,0 +1,9 @@
+[
+  {
+    "request_id": 1,
+    "response": {
+      "type": "ChoiceResponse",
+      "choice": {"id": "move", "destination": {"zone_id": "zone_center"}}
+    }
+  }
+]
