@@ -472,9 +472,35 @@ def _handle_action_selection(state: SessionState, input: StepInput,
                     )
                     events.extend(action_events)
 
+                    # Check for concentration on the target if damage was dealt
+                    state, conc_events = _check_concentration_on_damage(
+                        state, action_events, active
+                    )
+                    events.extend(conc_events)
+
                     # After an action that costs an action, end the turn
                     if kind == "Action":
                         state.combat.turn_phase = TurnPhase.END_OF_TURN
+
+                elif choice_id == "move":
+                    # Handle move action: move the entity to a new zone
+                    economy.action_used = False  # Moving doesn't cost an action
+                    destination = None
+                    if isinstance(response, dict):
+                        c = response.get("choice", response)
+                        if isinstance(c, dict):
+                            destination = c.get("destination", {})
+                    if destination and isinstance(destination, dict):
+                        zone_id = destination.get("zone_id", "")
+                        if zone_id:
+                            from reference.sfs import dispatch_sfs
+                            state, _, move_events = dispatch_sfs(
+                                "sfs.move.to_zone", state,
+                                {"entity": active, "zone_id": zone_id},
+                            )
+                            events.extend(move_events)
+                    # Movement doesn't end the turn
+                    state.combat.turn_phase = TurnPhase.END_OF_TURN
 
         # After action, check if we should re-prompt or end turn
         # See spec 07 Section 4: prompt again unless end conditions met
