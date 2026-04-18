@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.check.skill.json",
+  "title": "sfs.check.skill",
+  "description": "Skill check against a DC. Gathers modifiers, rolls via sfs.roll.generic, compares total to DC. See specs/05 Section 4.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["RollMade", "CheckResolved"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["actor", "check_id", "dc"],
+      "additionalProperties": false,
+      "properties": {
+        "actor": { "$ref": "_common.json#/$defs/EntityId" },
+        "check_id": { "$ref": "_common.json#/$defs/CheckId" },
+        "dc": { "type": "integer" },
+        "advantage_override": { "$ref": "_common.json#/$defs/RollMode" },
+        "additional_modifiers": { "type": "array", "items": { "$ref": "_common.json#/$defs/Modifier" } }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roll", "total", "dc", "margin", "success"],
+      "properties": {
+        "roll": { "$ref": "_common.json#/$defs/RollResult" },
+        "total": { "type": "integer" },
+        "dc": { "type": "integer" },
+        "margin": { "type": "integer" },
+        "success": { "type": "boolean" }
+      }
+    }
+  }
+}

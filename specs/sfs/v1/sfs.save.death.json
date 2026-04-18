@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.save.death.json",
+  "title": "sfs.save.death",
+  "description": "Death saving throw. Three successes stabilize; three failures kill. Natural 1 = two failures; natural 20 = regain 1 HP. See specs/08 Section 4.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["RollMade", "SaveResolved", "ResourceChanged", "ComponentSet"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["entity"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": { "$ref": "_common.json#/$defs/EntityId" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roll", "dc", "success", "successes", "failures", "outcome"],
+      "properties": {
+        "roll": { "$ref": "_common.json#/$defs/RollResult" },
+        "dc": { "type": "integer" },
+        "success": { "type": "boolean" },
+        "successes": { "type": "integer", "minimum": 0 },
+        "failures": { "type": "integer", "minimum": 0 },
+        "outcome": { "type": "string", "enum": ["ongoing", "stabilized", "dead", "revived"] }
+      }
+    }
+  }
+}

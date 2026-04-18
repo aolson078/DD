@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.check.contested.json",
+  "title": "sfs.check.contested",
+  "description": "Two entities roll opposing checks; higher total wins. Ties go to the defender (the entity not initiating). See specs/05 Section 4.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["RollMade", "CheckResolved"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["actor_a", "actor_b", "check_id_a", "check_id_b"],
+      "additionalProperties": false,
+      "properties": {
+        "actor_a": { "$ref": "_common.json#/$defs/EntityId" },
+        "actor_b": { "$ref": "_common.json#/$defs/EntityId" },
+        "check_id_a": { "$ref": "_common.json#/$defs/CheckId" },
+        "check_id_b": { "$ref": "_common.json#/$defs/CheckId" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roll_a", "roll_b", "total_a", "total_b", "winner"],
+      "properties": {
+        "roll_a": { "$ref": "_common.json#/$defs/RollResult" },
+        "roll_b": { "$ref": "_common.json#/$defs/RollResult" },
+        "total_a": { "type": "integer" },
+        "total_b": { "type": "integer" },
+        "winner": { "type": "string", "enum": ["a", "b"] }
+      }
+    }
+  }
+}

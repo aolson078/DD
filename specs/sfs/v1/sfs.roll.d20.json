@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.roll.d20.json",
+  "title": "sfs.roll.d20",
+  "description": "Roll a d20 with mode (straight/advantage/disadvantage) and modifier, return RollResult. Consumes RNG per schedule D2 in specs/02.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["RollMade"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["actor", "mode", "purpose"],
+      "additionalProperties": false,
+      "properties": {
+        "actor": { "$ref": "_common.json#/$defs/EntityId" },
+        "modifiers": { "type": "array", "items": { "$ref": "_common.json#/$defs/Modifier" } },
+        "mode": { "$ref": "_common.json#/$defs/RollMode" },
+        "purpose": { "$ref": "_common.json#/$defs/RollPurpose" }
+      }
+    },
+    "output": { "$ref": "_common.json#/$defs/RollResult" }
+  }
+}

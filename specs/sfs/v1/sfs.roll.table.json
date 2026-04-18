@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.roll.table.json",
+  "title": "sfs.roll.table",
+  "description": "Sample a RollTable by id. Rolls the table's dice expression, looks up the matching entry, and returns it.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["RollMade"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["table_id"],
+      "additionalProperties": false,
+      "properties": {
+        "table_id": { "$ref": "_common.json#/$defs/RollTableId" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roll", "entry_index", "result_text"],
+      "properties": {
+        "roll": { "$ref": "_common.json#/$defs/RollResult" },
+        "entry_index": { "type": "integer", "minimum": 0 },
+        "result_text": { "type": "string" },
+        "effect_template": { "$ref": "_common.json#/$defs/EffectTemplateId" }
+      }
+    }
+  }
+}

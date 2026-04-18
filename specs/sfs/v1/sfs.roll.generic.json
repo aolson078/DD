@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.roll.generic.json",
+  "title": "sfs.roll.generic",
+  "description": "Roll any RollSpec and return RollResult. The general-purpose dice roller used by resolve_check and other engine internals.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["RollMade"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["spec"],
+      "additionalProperties": false,
+      "properties": {
+        "spec": { "$ref": "_common.json#/$defs/RollSpec" },
+        "actor": { "$ref": "_common.json#/$defs/EntityId" }
+      }
+    },
+    "output": { "$ref": "_common.json#/$defs/RollResult" }
+  }
+}

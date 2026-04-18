@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.save.concentration.json",
+  "title": "sfs.save.concentration",
+  "description": "Concentration save triggered by damage to a concentrating entity. DC = max(10, damage/2). On failure, the concentration effect is removed. See specs/03 Section 7.1.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["RollMade", "SaveResolved", "PersistentEffectRemoved"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["entity", "damage_taken"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": { "$ref": "_common.json#/$defs/EntityId" },
+        "damage_taken": { "type": "integer", "minimum": 0 },
+        "concentration_effect_id": { "$ref": "_common.json#/$defs/PersistentEffectInstanceId" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roll", "dc", "success"],
+      "properties": {
+        "roll": { "$ref": "_common.json#/$defs/RollResult" },
+        "dc": { "type": "integer" },
+        "success": { "type": "boolean" },
+        "removed_effect_id": { "$ref": "_common.json#/$defs/PersistentEffectInstanceId" }
+      }
+    }
+  }
+}

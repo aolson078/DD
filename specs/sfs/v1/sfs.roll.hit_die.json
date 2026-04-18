@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-sim.spec/schemas/sfs/v1/sfs.roll.hit_die.json",
+  "title": "sfs.roll.hit_die",
+  "description": "Spend one hit die during short rest. Rolls the entity's hit die and returns the result. See specs/08 Section 3.2.",
+  "x-sfs-since": "1.0.0",
+  "x-sfs-purity": "Stateful",
+  "x-sfs-effects": ["RollMade", "ResourceChanged"],
+  "type": "object",
+  "required": ["input", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "object",
+      "required": ["entity"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": { "$ref": "_common.json#/$defs/EntityId" },
+        "hit_die_resource": { "$ref": "_common.json#/$defs/ResourceId" }
+      }
+    },
+    "output": { "$ref": "_common.json#/$defs/RollResult" }
+  }
+}
