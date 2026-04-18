@@ -409,8 +409,22 @@ def _handle_action_selection(state: SessionState, input: StepInput,
     See spec 07 Section 4.
     """
     response = input.value
+    choice_id = ""
+    target_id = None
+
+    # Extract choice_id and target from various response formats
     if isinstance(response, dict):
-        choice_id = response.get("id", response.get("choice", ""))
+        # Format: {"type": "ChoiceResponse", "choice": {"id": "...", "target": N}}
+        # or:     {"id": "...", "target": N}
+        # or:     {"id": "..."}
+        choice = response.get("choice", response)
+        if isinstance(choice, dict):
+            choice_id = choice.get("id", "")
+            target_id = choice.get("target")
+        elif isinstance(choice, str):
+            choice_id = choice
+        else:
+            choice_id = str(choice) if choice is not None else ""
     elif isinstance(response, str):
         choice_id = response
     else:
@@ -452,32 +466,312 @@ def _handle_action_selection(state: SessionState, input: StepInput,
                     elif kind == "BonusAction":
                         economy.bonus_action_used = True
 
-                    # Process action effects via SFS
-                    for effect_ref in action_def.get("effects", []):
-                        sfs_fn = effect_ref.get("sfs_function")
-                        if sfs_fn:
-                            from reference.sfs import dispatch_sfs
-                            try:
-                                sfs_args = dict(effect_ref.get("args", {}))
-                                # Substitute actor reference
-                                if "actor" in sfs_args and sfs_args["actor"] == "$active":
-                                    sfs_args["actor"] = active
-                                if "attacker" in sfs_args and sfs_args["attacker"] == "$active":
-                                    sfs_args["attacker"] = active
-                                if "source" in sfs_args and sfs_args["source"] == "$active":
-                                    sfs_args["source"] = active
+                    # Resolve the action's effects
+                    state, action_events = _resolve_action_effects(
+                        state, action_def, active, target_id
+                    )
+                    events.extend(action_events)
 
-                                state, result, sfs_events = dispatch_sfs(
-                                    sfs_fn, state, sfs_args
-                                )
-                                events.extend(sfs_events)
-                            except Exception:
-                                pass  # Simplified error handling
+                    # After an action that costs an action, end the turn
+                    if kind == "Action":
+                        state.combat.turn_phase = TurnPhase.END_OF_TURN
 
         # After action, check if we should re-prompt or end turn
         # See spec 07 Section 4: prompt again unless end conditions met
 
     return Transition.yielded(events, state)
+
+
+def _resolve_action_effects(
+    state: SessionState,
+    action_def: dict,
+    source: EntityId,
+    target_id: EntityId | None,
+) -> tuple[SessionState, EventBatch]:
+    """Resolve an action's effect templates.
+
+    Effect references in actions are strings that point to effect_templates
+    in the pack. Each effect template has a body (Damage, Heal, etc.)
+    that we resolve via SFS functions.
+    """
+    from reference.sfs import dispatch_sfs
+    from reference.rules import resolve_attack
+    from reference.domain import DieGroup, DieKindDn, KeepRule, RollMode, RollPurpose
+
+    events: EventBatch = []
+    effect_refs = action_def.get("effects", [])
+
+    # Look up effect templates from pack data
+    effect_templates = {}
+    if state.pack_data:
+        for et in state.pack_data.get("effect_templates", []):
+            if isinstance(et, dict) and "id" in et:
+                effect_templates[et["id"]] = et
+
+    # Check if this is a spell attack action
+    attack_type = action_def.get("attack_type")
+
+    for ref in effect_refs:
+        # Effect refs can be strings (template ids) or dicts with SFS calls
+        if isinstance(ref, str):
+            template = effect_templates.get(ref)
+            if template is None:
+                continue
+
+            body = template.get("body", {})
+
+            # Handle Damage body
+            if "Damage" in body:
+                damage_body = body["Damage"]
+                amounts = damage_body.get("amounts", [])
+
+                if target_id is None:
+                    continue
+
+                # If this is a spell attack, roll an attack first
+                if attack_type in ("ranged", "melee"):
+                    # Get spell attack bonus from attacker
+                    attacker = state.entities.get(source)
+                    attack_bonus = 0
+                    if attacker:
+                        stats = attacker.get_stats()
+                        if stats:
+                            attack_bonus = stats.derived.get(
+                                "spell_attack_bonus",
+                                stats.derived.get("attack_bonus", 0)
+                            )
+
+                    # Get defender AC
+                    defender = state.entities.get(target_id)
+                    ac = 10
+                    if defender:
+                        stats = defender.get_stats()
+                        if stats:
+                            ac = stats.derived.get("armor_class", 10)
+
+                    # Parse damage dice from expression
+                    damage_dice = []
+                    damage_type = "slashing"
+                    for amt in amounts:
+                        expr = amt.get("expression", "1d8")
+                        damage_type = amt.get("type", "slashing")
+                        dice_groups = _parse_dice_expression(expr)
+                        damage_dice.extend(dice_groups)
+
+                    state, attack_result, attack_events = resolve_attack(
+                        state, source, target_id,
+                        attack_bonus=attack_bonus,
+                        ac=ac,
+                        damage_dice=damage_dice if damage_dice else None,
+                        damage_type=damage_type,
+                        damage_bonus=0,
+                    )
+                    events.extend(attack_events)
+
+                    # If hit, apply damage (with resistance/vulnerability)
+                    if attack_result.hit and attack_result.damage:
+                        damage = attack_result.damage
+                        state, apply_events = _apply_damage_with_resistance(
+                            state, target_id, damage
+                        )
+                        events.extend(apply_events)
+                else:
+                    # Direct damage (no attack roll)
+                    state, damage_result, damage_events = dispatch_sfs(
+                        "sfs.damage.typed", state, {
+                            "source": source,
+                            "target": target_id,
+                            "amounts": amounts,
+                        }
+                    )
+                    events.extend(damage_events)
+
+            # Handle Heal body
+            elif "Heal" in body:
+                heal_body = body["Heal"]
+                amount_data = heal_body.get("amount", {})
+                expr = amount_data.get("expression", "0")
+                # For simplicity, parse and roll the expression
+                total = _eval_dice_expression(expr, state)
+                heal_target = target_id if target_id is not None else source
+                state, _, heal_events = dispatch_sfs(
+                    "sfs.heal.flat", state, {
+                        "source": source,
+                        "target": heal_target,
+                        "amount": total,
+                    }
+                )
+                events.extend(heal_events)
+
+        elif isinstance(ref, dict):
+            # Direct SFS call reference
+            sfs_fn = ref.get("sfs_function")
+            if sfs_fn:
+                try:
+                    sfs_args = dict(ref.get("args", {}))
+                    # Substitute references
+                    for key in ("actor", "attacker", "source"):
+                        if key in sfs_args and sfs_args[key] == "$active":
+                            sfs_args[key] = source
+                    if "target" in sfs_args and sfs_args["target"] == "$target":
+                        sfs_args["target"] = target_id
+                    if "defender" in sfs_args and sfs_args["defender"] == "$target":
+                        sfs_args["defender"] = target_id
+
+                    state, _, sfs_events = dispatch_sfs(sfs_fn, state, sfs_args)
+                    events.extend(sfs_events)
+                except Exception:
+                    pass
+
+    return state, events
+
+
+def _parse_dice_expression(expr: str) -> list:
+    """Parse a dice expression like '1d10' into DieGroups."""
+    from reference.domain import DieGroup, DieKindDn, KeepRule
+
+    groups = []
+    parts = expr.replace("-", "+-").split("+")
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        if "d" in part:
+            count_str, die_str = part.split("d", 1)
+            count = int(count_str) if count_str else 1
+            die_size = int(die_str)
+            groups.append(DieGroup(count=count, kind=DieKindDn(die_size), keep=KeepRule.ALL))
+    return groups
+
+
+def _eval_dice_expression(expr: str, state: SessionState) -> int:
+    """Parse and roll a dice expression, returning the total."""
+    from reference.domain import DieGroup, DieKindDn, KeepRule, RollSpec, RollMode, RollPurpose
+    from reference.rules import resolve_roll
+
+    total_bonus = 0
+    dice_groups = []
+    parts = expr.replace("-", "+-").split("+")
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        if "d" in part:
+            count_str, die_str = part.split("d", 1)
+            count = int(count_str) if count_str else 1
+            die_size = int(die_str)
+            dice_groups.append(DieGroup(count=count, kind=DieKindDn(die_size), keep=KeepRule.ALL))
+        else:
+            total_bonus += int(part)
+
+    if not dice_groups:
+        return total_bonus
+
+    spec = RollSpec(dice=dice_groups, mode=RollMode.STRAIGHT, purpose=RollPurpose.ATTACK)
+    result, state.rng = resolve_roll(spec, state.rng)
+    return result.total + total_bonus
+
+
+def _apply_damage_with_resistance(
+    state: SessionState,
+    target_id: EntityId,
+    damage: 'DamageInstance',
+) -> tuple[SessionState, EventBatch]:
+    """Apply damage to a target, accounting for resistance/vulnerability
+    from persistent effects.
+
+    Persistent effects with ScaleNumeric transformers that match the damage
+    type will scale the damage (e.g., resistance halves fire damage).
+    """
+    from reference.domain import DamageInstance
+
+    events: EventBatch = []
+    target = state.entities.get(target_id)
+    if target is None:
+        return state, events
+
+    original_amount = damage.amount
+    final_amount = damage.amount
+    damage_type = damage.type
+
+    # Check for persistent effects on target with damage transformers
+    persistent_effects = target.components.get("persistent_effects", [])
+    for pe in persistent_effects:
+        if not isinstance(pe, dict):
+            continue
+        for transformer in pe.get("transformers", []):
+            if not isinstance(transformer, dict):
+                continue
+            t_type = transformer.get("type", "")
+            applies_to = transformer.get("applies_to", "")
+            t_filter = transformer.get("filter", {})
+
+            if t_type == "ScaleNumeric" and applies_to == "damage":
+                # Check if the filter matches the damage type
+                filter_damage_type = t_filter.get("damage_type", "")
+                if filter_damage_type and filter_damage_type != damage_type:
+                    continue
+
+                # Apply scaling
+                numerator = transformer.get("numerator", 1)
+                denominator = transformer.get("denominator", 1)
+                if denominator != 0:
+                    # Floor division for resistance
+                    final_amount = (final_amount * numerator) // denominator
+
+    # Emit EffectPushed event for the damage
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.EFFECT_PUSHED,
+        source=damage.source,
+        data={
+            "type": "Damage",
+            "damage_type": damage_type,
+            "amount": original_amount,
+            "target": target_id,
+        },
+    ))
+
+    # Emit EffectResolved event showing the transformed amount
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.EFFECT_RESOLVED,
+        source=damage.source,
+        data={
+            "original_amount": original_amount,
+            "transformed_amount": final_amount,
+            "target": target_id,
+        },
+    ))
+
+    # Apply damage to HP
+    resources = target.get_resources()
+    if resources:
+        hp_pool = resources.pools.get("hp")
+        if hp_pool:
+            hp_before = hp_pool.current
+            hp_pool.current = max(0, hp_pool.current - final_amount)
+            delta = hp_pool.current - hp_before
+
+            event_id = state.next_event_id()
+            events.append(Event(
+                id=event_id,
+                clock=dict(state.clocks),
+                kind=EventKind.RESOURCE_CHANGED,
+                source=target_id,
+                data={
+                    "delta": delta,
+                    "entity": target_id,
+                    "new_current": hp_pool.current,
+                    "resource": "hp",
+                },
+            ))
+
+    return state, events
 
 
 def _step_tick(state: SessionState, input: StepInput) -> Transition:

@@ -600,6 +600,828 @@ def sfs_attack_melee(state: 'SessionState', args: dict) -> tuple['SessionState',
 
 
 # ---------------------------------------------------------------------------
+# sfs.save.ability  (spec 04 Section 5.5)
+# ---------------------------------------------------------------------------
+
+@sfs_function("sfs.save.ability")
+def sfs_save_ability(state: 'SessionState', args: dict) -> tuple['SessionState', dict, EventBatch]:
+    """Roll d20 + ability modifier vs DC.
+
+    Input: {entity, ability, dc, modifiers?}
+    Output: {roll, total, dc, success}
+    """
+    state = copy.deepcopy(state)
+    events: EventBatch = []
+
+    entity_id = args["entity"]
+    ability = args.get("ability", "con")
+    dc = args.get("dc", 10)
+
+    entity = state.entities.get(entity_id)
+    ability_mod = 0
+    if entity:
+        stats = entity.get_stats()
+        if stats:
+            score = stats.scores.get(ability, 10)
+            ability_mod = (score - 10) // 2
+
+    # Additional modifiers
+    extra_mods: list[Modifier] = []
+    for m in args.get("modifiers", []):
+        extra_mods.append(Modifier(
+            value=m.get("value", 0),
+            source=ModifierSource(kind="Circumstance"),
+        ))
+
+    all_mods = [Modifier(value=ability_mod, source=ModifierSource(kind="Stat", value=ability))] + extra_mods
+
+    spec = RollSpec(
+        dice=[DieGroup(count=1, kind=DieKindDn(20), keep=KeepRule.ALL)],
+        modifiers=all_mods,
+        mode=RollMode.STRAIGHT,
+        purpose=RollPurposeSave(save_id=ability),
+    )
+
+    result, state.rng = resolve_roll(spec, state.rng)
+
+    total = result.total
+    success = total >= dc
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.ROLL_MADE,
+        source=entity_id,
+        data={
+            "actor": entity_id,
+            "result": result.to_dict(),
+            "spec": spec.to_dict(),
+        },
+    ))
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.SAVE_RESOLVED,
+        source=entity_id,
+        data={
+            "ability": ability,
+            "dc": dc,
+            "entity": entity_id,
+            "success": success,
+            "total": total,
+        },
+    ))
+
+    return state, {
+        "dc": dc,
+        "roll": result.to_dict(),
+        "success": success,
+        "total": total,
+    }, events
+
+
+# ---------------------------------------------------------------------------
+# sfs.save.death  (spec 04 Section 5.5)
+# ---------------------------------------------------------------------------
+
+@sfs_function("sfs.save.death")
+def sfs_save_death(state: 'SessionState', args: dict) -> tuple['SessionState', dict, EventBatch]:
+    """Death saving throw: d20 vs DC 10.
+
+    Tracks successes and failures on the entity. Natural 1 = 2 failures,
+    natural 20 = revive with 1 HP.
+
+    Input: {entity}
+    Output: {roll, natural, success, successes, failures, revived, dead}
+    """
+    state = copy.deepcopy(state)
+    events: EventBatch = []
+
+    entity_id = args["entity"]
+    dc = 10
+
+    entity = state.entities.get(entity_id)
+
+    # Get or initialise death save tracking from entity components
+    death_saves = {}
+    if entity:
+        death_saves = entity.components.get("death_saves", {"successes": 0, "failures": 0})
+
+    spec = RollSpec(
+        dice=[DieGroup(count=1, kind=DieKindDn(20), keep=KeepRule.ALL)],
+        modifiers=[],
+        mode=RollMode.STRAIGHT,
+        purpose=RollPurposeSave(save_id="death"),
+    )
+
+    result, state.rng = resolve_roll(spec, state.rng)
+    natural = result.natural if result.natural is not None else result.total
+
+    revived = False
+    dead = False
+
+    if natural == 1:
+        # Natural 1: two failures
+        death_saves["failures"] = death_saves.get("failures", 0) + 2
+        success = False
+    elif natural == 20:
+        # Natural 20: revive with 1 HP
+        revived = True
+        success = True
+        death_saves = {"successes": 0, "failures": 0}
+        if entity:
+            resources = entity.get_resources()
+            if resources:
+                hp_pool = resources.pools.get("hp")
+                if hp_pool:
+                    hp_pool.current = 1
+                    events.append(Event(
+                        id=state.next_event_id(),
+                        clock=dict(state.clocks),
+                        kind=EventKind.RESOURCE_CHANGED,
+                        source=entity_id,
+                        data={
+                            "delta": 1,
+                            "entity": entity_id,
+                            "new_current": 1,
+                            "resource": "hp",
+                        },
+                    ))
+    elif result.total >= dc:
+        death_saves["successes"] = death_saves.get("successes", 0) + 1
+        success = True
+    else:
+        death_saves["failures"] = death_saves.get("failures", 0) + 1
+        success = False
+
+    if death_saves.get("failures", 0) >= 3:
+        dead = True
+    if death_saves.get("successes", 0) >= 3:
+        # Stabilised - reset counters
+        death_saves = {"successes": 0, "failures": 0}
+
+    # Persist death save tracking
+    if entity:
+        entity.components["death_saves"] = death_saves
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.ROLL_MADE,
+        source=entity_id,
+        data={
+            "actor": entity_id,
+            "result": result.to_dict(),
+            "spec": spec.to_dict(),
+        },
+    ))
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.SAVE_RESOLVED,
+        source=entity_id,
+        data={
+            "dead": dead,
+            "entity": entity_id,
+            "failures": death_saves.get("failures", 0),
+            "natural": natural,
+            "revived": revived,
+            "successes": death_saves.get("successes", 0),
+            "success": success,
+        },
+    ))
+
+    return state, {
+        "dead": dead,
+        "failures": death_saves.get("failures", 0),
+        "natural": natural,
+        "revived": revived,
+        "roll": result.to_dict(),
+        "success": success,
+        "successes": death_saves.get("successes", 0),
+    }, events
+
+
+# ---------------------------------------------------------------------------
+# sfs.check.skill  (spec 04 Section 5.6)
+# ---------------------------------------------------------------------------
+
+@sfs_function("sfs.check.skill")
+def sfs_check_skill(state: 'SessionState', args: dict) -> tuple['SessionState', dict, EventBatch]:
+    """Roll d20 + skill modifier vs DC.
+
+    Input: {entity, skill, dc, modifiers?}
+    Output: {roll, total, dc, margin, success}
+    """
+    state = copy.deepcopy(state)
+    events: EventBatch = []
+
+    entity_id = args["entity"]
+    skill = args.get("skill", "athletics")
+    dc = args.get("dc", 10)
+
+    entity = state.entities.get(entity_id)
+    skill_mod = 0
+    if entity:
+        stats = entity.get_stats()
+        if stats:
+            skill_mod = stats.derived.get(f"{skill}_bonus", 0)
+
+    extra_mods: list[Modifier] = []
+    for m in args.get("modifiers", []):
+        extra_mods.append(Modifier(
+            value=m.get("value", 0),
+            source=ModifierSource(kind="Circumstance"),
+        ))
+
+    all_mods = [Modifier(value=skill_mod, source=ModifierSource(kind="Stat", value=skill))] + extra_mods
+
+    spec = RollSpec(
+        dice=[DieGroup(count=1, kind=DieKindDn(20), keep=KeepRule.ALL)],
+        modifiers=all_mods,
+        mode=RollMode.STRAIGHT,
+        purpose=RollPurposeCheck(check_id=skill),
+    )
+
+    result, state.rng = resolve_roll(spec, state.rng)
+
+    total = result.total
+    margin = total - dc
+    success = margin >= 0
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.ROLL_MADE,
+        source=entity_id,
+        data={
+            "actor": entity_id,
+            "result": result.to_dict(),
+            "spec": spec.to_dict(),
+        },
+    ))
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.CHECK_RESOLVED,
+        source=entity_id,
+        data={
+            "dc": dc,
+            "entity": entity_id,
+            "margin": margin,
+            "skill": skill,
+            "success": success,
+            "total": total,
+        },
+    ))
+
+    return state, {
+        "dc": dc,
+        "margin": margin,
+        "roll": result.to_dict(),
+        "success": success,
+        "total": total,
+    }, events
+
+
+# ---------------------------------------------------------------------------
+# sfs.condition.apply  (spec 04 Section 5.7)
+# ---------------------------------------------------------------------------
+
+@sfs_function("sfs.condition.apply")
+def sfs_condition_apply(state: 'SessionState', args: dict) -> tuple['SessionState', dict, EventBatch]:
+    """Add a condition to an entity's conditions set.
+
+    Input: {entity, condition, source?}
+    Output: {effect_id}
+    """
+    state = copy.deepcopy(state)
+    events: EventBatch = []
+
+    entity_id = args["entity"]
+    condition = args["condition"]
+    source_id = args.get("source", entity_id)
+
+    entity = state.entities.get(entity_id)
+    if entity is None:
+        return state, {"effect_id": None}, events
+
+    # Get or create the conditions set
+    conditions = entity.components.get("conditions", set())
+    if isinstance(conditions, list):
+        conditions = set(conditions)
+    conditions.add(condition)
+    entity.components["conditions"] = conditions
+
+    effect_id = state.next_effect_id_val()
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.PERSISTENT_EFFECT_APPLIED,
+        source=source_id,
+        data={
+            "condition": condition,
+            "effect_id": effect_id,
+            "entity": entity_id,
+            "source": source_id,
+        },
+    ))
+
+    return state, {"effect_id": effect_id}, events
+
+
+# ---------------------------------------------------------------------------
+# sfs.condition.remove  (spec 04 Section 5.7)
+# ---------------------------------------------------------------------------
+
+@sfs_function("sfs.condition.remove")
+def sfs_condition_remove(state: 'SessionState', args: dict) -> tuple['SessionState', dict, EventBatch]:
+    """Remove a condition from an entity.
+
+    Input: {entity, condition}
+    Output: {removed: bool}
+    """
+    state = copy.deepcopy(state)
+    events: EventBatch = []
+
+    entity_id = args["entity"]
+    condition = args["condition"]
+
+    entity = state.entities.get(entity_id)
+    if entity is None:
+        return state, {"removed": False}, events
+
+    conditions = entity.components.get("conditions", set())
+    if isinstance(conditions, list):
+        conditions = set(conditions)
+
+    removed = condition in conditions
+    if removed:
+        conditions.discard(condition)
+        entity.components["conditions"] = conditions
+
+        event_id = state.next_event_id()
+        events.append(Event(
+            id=event_id,
+            clock=dict(state.clocks),
+            kind=EventKind.PERSISTENT_EFFECT_REMOVED,
+            source=entity_id,
+            data={
+                "condition": condition,
+                "entity": entity_id,
+                "removed": True,
+            },
+        ))
+
+    return state, {"removed": removed}, events
+
+
+# ---------------------------------------------------------------------------
+# sfs.effect.apply_persistent  (spec 04 Section 5.8)
+# ---------------------------------------------------------------------------
+
+@sfs_function("sfs.effect.apply_persistent")
+def sfs_effect_apply_persistent(state: 'SessionState', args: dict) -> tuple['SessionState', dict, EventBatch]:
+    """Create a PersistentEffectInstance on an entity.
+
+    Input: {entity, effect_id?, name, duration?, source?}
+    Output: {effect_id, name, entity, duration}
+    """
+    state = copy.deepcopy(state)
+    events: EventBatch = []
+
+    entity_id = args["entity"]
+    name = args.get("name", "unnamed_effect")
+    duration = args.get("duration", None)
+    source_id = args.get("source", entity_id)
+
+    entity = state.entities.get(entity_id)
+    if entity is None:
+        return state, {"effect_id": None}, events
+
+    effect_id = state.next_effect_id_val()
+
+    # Store the persistent effect on the entity
+    persistent_effects = entity.components.get("persistent_effects", [])
+    instance = {
+        "effect_id": effect_id,
+        "name": name,
+        "duration": duration,
+        "source": source_id,
+    }
+    persistent_effects.append(instance)
+    entity.components["persistent_effects"] = persistent_effects
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.PERSISTENT_EFFECT_APPLIED,
+        source=source_id,
+        data={
+            "duration": duration,
+            "effect_id": effect_id,
+            "entity": entity_id,
+            "name": name,
+            "source": source_id,
+        },
+    ))
+
+    return state, {
+        "duration": duration,
+        "effect_id": effect_id,
+        "entity": entity_id,
+        "name": name,
+    }, events
+
+
+# ---------------------------------------------------------------------------
+# sfs.effect.remove_persistent  (spec 04 Section 5.8)
+# ---------------------------------------------------------------------------
+
+@sfs_function("sfs.effect.remove_persistent")
+def sfs_effect_remove_persistent(state: 'SessionState', args: dict) -> tuple['SessionState', dict, EventBatch]:
+    """Remove persistent effects matching a filter from an entity.
+
+    Input: {entity, name?, effect_id?}
+    Output: {removed_ids}
+    """
+    state = copy.deepcopy(state)
+    events: EventBatch = []
+
+    entity_id = args["entity"]
+    filter_name = args.get("name")
+    filter_id = args.get("effect_id")
+
+    entity = state.entities.get(entity_id)
+    if entity is None:
+        return state, {"removed_ids": []}, events
+
+    persistent_effects = entity.components.get("persistent_effects", [])
+    remaining = []
+    removed_ids = []
+
+    for eff in persistent_effects:
+        match = False
+        if filter_id is not None and eff.get("effect_id") == filter_id:
+            match = True
+        elif filter_name is not None and eff.get("name") == filter_name:
+            match = True
+
+        if match:
+            removed_ids.append(eff.get("effect_id"))
+        else:
+            remaining.append(eff)
+
+    entity.components["persistent_effects"] = remaining
+
+    for rid in removed_ids:
+        event_id = state.next_event_id()
+        events.append(Event(
+            id=event_id,
+            clock=dict(state.clocks),
+            kind=EventKind.PERSISTENT_EFFECT_REMOVED,
+            source=entity_id,
+            data={
+                "effect_id": rid,
+                "entity": entity_id,
+            },
+        ))
+
+    return state, {"removed_ids": removed_ids}, events
+
+
+# ---------------------------------------------------------------------------
+# sfs.heal.dice  (spec 04 Section 5.4)
+# ---------------------------------------------------------------------------
+
+@sfs_function("sfs.heal.dice")
+def sfs_heal_dice(state: 'SessionState', args: dict) -> tuple['SessionState', dict, EventBatch]:
+    """Roll healing dice + bonus, heal target.
+
+    Input: {source, target, dice_count?, dice_size?, bonus?}
+    Output: {roll, healed, hp_after}
+    """
+    state = copy.deepcopy(state)
+    events: EventBatch = []
+
+    source_id = args.get("source")
+    target_id = args["target"]
+    dice_count = args.get("dice_count", 1)
+    dice_size = args.get("dice_size", 8)
+    bonus = args.get("bonus", 0)
+
+    # Roll the healing dice
+    spec = RollSpec(
+        dice=[DieGroup(count=dice_count, kind=DieKindDn(dice_size), keep=KeepRule.ALL)],
+        modifiers=[Modifier(value=bonus, source=ModifierSource(kind="Circumstance"))] if bonus else [],
+        mode=RollMode.STRAIGHT,
+        purpose=RollPurpose.HIT_DICE,
+    )
+
+    result, state.rng = resolve_roll(spec, state.rng)
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.ROLL_MADE,
+        source=source_id,
+        data={
+            "actor": source_id,
+            "result": result.to_dict(),
+            "spec": spec.to_dict(),
+        },
+    ))
+
+    heal_amount = max(0, result.total)
+
+    # Apply healing to target
+    target = state.entities.get(target_id)
+    healed = 0
+    hp_after = 0
+    if target:
+        resources = target.get_resources()
+        if resources:
+            hp_pool = resources.pools.get("hp")
+            if hp_pool:
+                hp_before = hp_pool.current
+                hp_pool.current = min(hp_pool.maximum, hp_pool.current + heal_amount)
+                healed = hp_pool.current - hp_before
+                hp_after = hp_pool.current
+
+                event_id = state.next_event_id()
+                events.append(Event(
+                    id=event_id,
+                    clock=dict(state.clocks),
+                    kind=EventKind.RESOURCE_CHANGED,
+                    source=target_id,
+                    data={
+                        "delta": healed,
+                        "entity": target_id,
+                        "new_current": hp_pool.current,
+                        "resource": "hp",
+                    },
+                ))
+
+    return state, {
+        "healed": healed,
+        "hp_after": hp_after,
+        "roll": result.to_dict(),
+    }, events
+
+
+# ---------------------------------------------------------------------------
+# sfs.move.to_zone  (spec 04 Section 5.9)
+# ---------------------------------------------------------------------------
+
+@sfs_function("sfs.move.to_zone")
+def sfs_move_to_zone(state: 'SessionState', args: dict) -> tuple['SessionState', dict, EventBatch]:
+    """Update entity position zone_id.
+
+    Input: {entity, zone_id}
+    Output: {moved, from_zone, to_zone}
+    """
+    state = copy.deepcopy(state)
+    events: EventBatch = []
+
+    entity_id = args["entity"]
+    to_zone = args["zone_id"]
+
+    entity = state.entities.get(entity_id)
+    if entity is None:
+        return state, {"moved": False, "from_zone": "", "to_zone": to_zone}, events
+
+    position = entity.get_position()
+    from_zone = ""
+    if position is None:
+        position = Position(zone_id=to_zone)
+        entity.components["position"] = position
+    else:
+        from_zone = position.zone_id
+        position.zone_id = to_zone
+
+    moved = from_zone != to_zone
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.COMPONENT_SET,
+        source=entity_id,
+        data={
+            "component": "position",
+            "entity": entity_id,
+            "from_zone": from_zone,
+            "moved": moved,
+            "to_zone": to_zone,
+        },
+    ))
+
+    return state, {
+        "from_zone": from_zone,
+        "moved": moved,
+        "to_zone": to_zone,
+    }, events
+
+
+# ---------------------------------------------------------------------------
+# sfs.action.spend_economy  (spec 04 Section 5.10)
+# ---------------------------------------------------------------------------
+
+@sfs_function("sfs.action.spend_economy")
+def sfs_action_spend_economy(state: 'SessionState', args: dict) -> tuple['SessionState', dict, EventBatch]:
+    """Set action/bonus/reaction as used.
+
+    Input: {entity, economy_type}
+    Output: {spent: true}
+    """
+    state = copy.deepcopy(state)
+    events: EventBatch = []
+
+    entity_id = args["entity"]
+    economy_type = args.get("economy_type", "action")  # "action", "bonus_action", "reaction"
+
+    entity = state.entities.get(entity_id)
+    if entity is None:
+        return state, {"spent": False}, events
+
+    # Track action economy on the entity component
+    action_economy = entity.components.get("action_economy", {
+        "action_used": False,
+        "bonus_action_used": False,
+        "reaction_used": False,
+    })
+
+    if economy_type == "action":
+        action_economy["action_used"] = True
+    elif economy_type == "bonus_action":
+        action_economy["bonus_action_used"] = True
+    elif economy_type == "reaction":
+        action_economy["reaction_used"] = True
+
+    entity.components["action_economy"] = action_economy
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.COMPONENT_SET,
+        source=entity_id,
+        data={
+            "component": "action_economy",
+            "economy_type": economy_type,
+            "entity": entity_id,
+            "spent": True,
+        },
+    ))
+
+    return state, {"spent": True}, events
+
+
+# ---------------------------------------------------------------------------
+# sfs.resource.set_max  (spec 04 Section 5.4)
+# ---------------------------------------------------------------------------
+
+@sfs_function("sfs.resource.set_max")
+def sfs_resource_set_max(state: 'SessionState', args: dict) -> tuple['SessionState', dict, EventBatch]:
+    """Change a resource's maximum and clamp current value.
+
+    Input: {entity, resource, new_max}
+    Output: {previous_max, new_max, current}
+    """
+    state = copy.deepcopy(state)
+    events: EventBatch = []
+
+    entity_id = args["entity"]
+    resource_id = args["resource"]
+    new_max = args["new_max"]
+
+    entity = state.entities.get(entity_id)
+    if entity is None:
+        raise ValueError(f"Entity {entity_id} not found")
+
+    resources = entity.get_resources()
+    if resources is None:
+        raise ValueError(f"Entity {entity_id} has no resources")
+
+    pool = resources.pools.get(resource_id)
+    if pool is None:
+        raise ValueError(f"Resource {resource_id} not found on entity {entity_id}")
+
+    previous_max = pool.maximum
+    pool.maximum = new_max
+    # Clamp current to new maximum
+    pool.current = min(pool.current, pool.maximum)
+
+    event_id = state.next_event_id()
+    events.append(Event(
+        id=event_id,
+        clock=dict(state.clocks),
+        kind=EventKind.RESOURCE_CHANGED,
+        source=entity_id,
+        data={
+            "current": pool.current,
+            "entity": entity_id,
+            "new_max": new_max,
+            "previous_max": previous_max,
+            "resource": resource_id,
+        },
+    ))
+
+    return state, {
+        "current": pool.current,
+        "new_max": new_max,
+        "previous_max": previous_max,
+    }, events
+
+
+# ---------------------------------------------------------------------------
+# sfs.attack.ranged  (spec 04 Section 5.3)
+# ---------------------------------------------------------------------------
+
+@sfs_function("sfs.attack.ranged")
+def sfs_attack_ranged(state: 'SessionState', args: dict) -> tuple['SessionState', dict, EventBatch]:
+    """Resolve a ranged attack with range check.
+
+    Same as attack.melee but uses DEX for attack/damage bonus
+    and checks range before resolving.
+
+    Input: {attacker, defender, range?, max_range?, weapon_item?, additional_modifiers?}
+    Output: {roll, hit, crit, damage?, in_range}
+    """
+    attacker_id = args["attacker"]
+    defender_id = args["defender"]
+    current_range = args.get("range", 0)
+    max_range = args.get("max_range", 120)
+
+    # Range check
+    if current_range > max_range:
+        return state, {
+            "crit": False,
+            "hit": False,
+            "in_range": False,
+            "roll": {},
+        }, []
+
+    # Get attack bonus from attacker's stats (DEX-based for ranged)
+    attacker = state.entities.get(attacker_id)
+    attack_bonus = 0
+    damage_bonus = 0
+    if attacker:
+        stats = attacker.get_stats()
+        if stats:
+            dex_score = stats.scores.get("dex", 10)
+            attack_bonus = (dex_score - 10) // 2
+            damage_bonus = attack_bonus
+
+    # Additional modifiers
+    for mod in args.get("additional_modifiers", []):
+        attack_bonus += mod.get("value", 0)
+
+    # Get defender AC
+    defender = state.entities.get(defender_id)
+    ac = 10
+    if defender:
+        stats = defender.get_stats()
+        if stats:
+            ac = stats.derived.get("armor_class", 10)
+
+    # Default damage: 1d8 + DEX
+    damage_dice = [DieGroup(count=1, kind=DieKindDn(8), keep=KeepRule.ALL)]
+
+    state, attack_result, events = resolve_attack(
+        state, attacker_id, defender_id,
+        attack_bonus=attack_bonus, ac=ac,
+        damage_dice=damage_dice,
+        damage_type="piercing",
+        damage_bonus=damage_bonus,
+    )
+
+    result: dict[str, Any] = {
+        "crit": attack_result.crit,
+        "hit": attack_result.hit,
+        "in_range": True,
+        "roll": attack_result.roll.roll.to_dict() if attack_result.roll and attack_result.roll.roll else {},
+    }
+    if attack_result.damage:
+        result["damage"] = attack_result.damage.to_dict()
+
+    return state, result, events
+
+
+# ---------------------------------------------------------------------------
 # Error types
 # ---------------------------------------------------------------------------
 

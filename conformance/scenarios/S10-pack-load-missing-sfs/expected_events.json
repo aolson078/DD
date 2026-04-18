@@ -1,3 +1,4 @@
 [
+  {"kind": "PackLoadStarted", "key_fields": {"pack_id": "broken-pack"}},
   {"kind": "Error", "key_fields": {"tier": "Fatal", "kind": "UnknownSfsFunction", "detail": {"name": "sfs.not.real", "pack_id": "broken-pack"}}}
 ]
