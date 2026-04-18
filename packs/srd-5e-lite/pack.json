@@ -1,0 +1,2520 @@
+{
+  "manifest": {
+    "id": "srd.5e.lite",
+    "version": "1.0.0",
+    "pack_schema_version": "1.0.0",
+    "sfs_version": "1.0.0",
+    "requires_sfs_functions": [
+      "sfs.roll.d20",
+      "sfs.roll.generic",
+      "sfs.roll.initiative",
+      "sfs.roll.hit_die",
+      "sfs.roll.table",
+      "sfs.check.skill",
+      "sfs.check.contested",
+      "sfs.save.ability",
+      "sfs.save.concentration",
+      "sfs.save.death",
+      "sfs.attack.melee",
+      "sfs.attack.ranged",
+      "sfs.attack.spell",
+      "sfs.damage.typed",
+      "sfs.damage.from_effect",
+      "sfs.crit.check",
+      "sfs.heal.flat",
+      "sfs.heal.dice",
+      "sfs.temp_hp.grant",
+      "sfs.resource.spend",
+      "sfs.resource.grant",
+      "sfs.resource.set_max",
+      "sfs.condition.apply",
+      "sfs.condition.remove",
+      "sfs.effect.apply_persistent",
+      "sfs.effect.remove_persistent",
+      "sfs.effect.dispel",
+      "sfs.move.to_zone",
+      "sfs.move.force",
+      "sfs.position.teleport",
+      "sfs.position.line_of_sight",
+      "sfs.knowledge.update",
+      "sfs.visibility.compute",
+      "sfs.action.can_take",
+      "sfs.action.spend_economy",
+      "sfs.rest.short",
+      "sfs.rest.long",
+      "sfs.time.advance",
+      "sfs.xp.award",
+      "sfs.progression.check",
+      "sfs.progression.apply_level",
+      "sfs.scene.instantiate"
+    ],
+    "requires_component_types": [
+      "stats",
+      "resources",
+      "inventory",
+      "position",
+      "knowledge",
+      "faction",
+      "controller",
+      "persistent_effects"
+    ],
+    "requires_damage_types": [
+      "slashing",
+      "piercing",
+      "bludgeoning",
+      "fire",
+      "cold",
+      "lightning",
+      "thunder",
+      "poison",
+      "acid",
+      "necrotic",
+      "radiant",
+      "force",
+      "psychic"
+    ],
+    "display_name": "SRD 5e Lite",
+    "description": "Minimal 5e-shaped sample pack for conformance testing. One class, three monsters, five spells.",
+    "authors": [
+      "D&D Simulator Spec"
+    ],
+    "license": "OGL-1.0a",
+    "origin": null,
+    "checksum": "0000000000000000000000000000000000000000000000000000000000000000",
+    "extends": []
+  },
+  "stats": [
+    {
+      "id": "str",
+      "display_name": "Strength",
+      "abbrev": "STR",
+      "default": 10,
+      "minimum": 1,
+      "maximum": 30,
+      "tags": []
+    },
+    {
+      "id": "dex",
+      "display_name": "Dexterity",
+      "abbrev": "DEX",
+      "default": 10,
+      "minimum": 1,
+      "maximum": 30,
+      "tags": []
+    },
+    {
+      "id": "con",
+      "display_name": "Constitution",
+      "abbrev": "CON",
+      "default": 10,
+      "minimum": 1,
+      "maximum": 30,
+      "tags": []
+    },
+    {
+      "id": "int",
+      "display_name": "Intelligence",
+      "abbrev": "INT",
+      "default": 10,
+      "minimum": 1,
+      "maximum": 30,
+      "tags": []
+    },
+    {
+      "id": "wis",
+      "display_name": "Wisdom",
+      "abbrev": "WIS",
+      "default": 10,
+      "minimum": 1,
+      "maximum": 30,
+      "tags": []
+    },
+    {
+      "id": "cha",
+      "display_name": "Charisma",
+      "abbrev": "CHA",
+      "default": 10,
+      "minimum": 1,
+      "maximum": 30,
+      "tags": []
+    }
+  ],
+  "ability_scores": [
+    {
+      "id": "str",
+      "display_name": "Strength",
+      "stat_id": "str",
+      "modifier_formula": "div2_floor_minus_5",
+      "proficiency_bonus_table": [
+        {
+          "level": 1,
+          "bonus": 2
+        },
+        {
+          "level": 2,
+          "bonus": 2
+        },
+        {
+          "level": 3,
+          "bonus": 2
+        },
+        {
+          "level": 4,
+          "bonus": 2
+        },
+        {
+          "level": 5,
+          "bonus": 3
+        },
+        {
+          "level": 6,
+          "bonus": 3
+        },
+        {
+          "level": 7,
+          "bonus": 3
+        },
+        {
+          "level": 8,
+          "bonus": 3
+        },
+        {
+          "level": 9,
+          "bonus": 4
+        },
+        {
+          "level": 10,
+          "bonus": 4
+        },
+        {
+          "level": 11,
+          "bonus": 4
+        },
+        {
+          "level": 12,
+          "bonus": 4
+        },
+        {
+          "level": 13,
+          "bonus": 5
+        },
+        {
+          "level": 14,
+          "bonus": 5
+        },
+        {
+          "level": 15,
+          "bonus": 5
+        },
+        {
+          "level": 16,
+          "bonus": 5
+        },
+        {
+          "level": 17,
+          "bonus": 6
+        },
+        {
+          "level": 18,
+          "bonus": 6
+        },
+        {
+          "level": 19,
+          "bonus": 6
+        },
+        {
+          "level": 20,
+          "bonus": 6
+        }
+      ]
+    },
+    {
+      "id": "dex",
+      "display_name": "Dexterity",
+      "stat_id": "dex",
+      "modifier_formula": "div2_floor_minus_5",
+      "proficiency_bonus_table": [
+        {
+          "level": 1,
+          "bonus": 2
+        },
+        {
+          "level": 2,
+          "bonus": 2
+        },
+        {
+          "level": 3,
+          "bonus": 2
+        },
+        {
+          "level": 4,
+          "bonus": 2
+        },
+        {
+          "level": 5,
+          "bonus": 3
+        },
+        {
+          "level": 6,
+          "bonus": 3
+        },
+        {
+          "level": 7,
+          "bonus": 3
+        },
+        {
+          "level": 8,
+          "bonus": 3
+        },
+        {
+          "level": 9,
+          "bonus": 4
+        },
+        {
+          "level": 10,
+          "bonus": 4
+        },
+        {
+          "level": 11,
+          "bonus": 4
+        },
+        {
+          "level": 12,
+          "bonus": 4
+        },
+        {
+          "level": 13,
+          "bonus": 5
+        },
+        {
+          "level": 14,
+          "bonus": 5
+        },
+        {
+          "level": 15,
+          "bonus": 5
+        },
+        {
+          "level": 16,
+          "bonus": 5
+        },
+        {
+          "level": 17,
+          "bonus": 6
+        },
+        {
+          "level": 18,
+          "bonus": 6
+        },
+        {
+          "level": 19,
+          "bonus": 6
+        },
+        {
+          "level": 20,
+          "bonus": 6
+        }
+      ]
+    },
+    {
+      "id": "con",
+      "display_name": "Constitution",
+      "stat_id": "con",
+      "modifier_formula": "div2_floor_minus_5",
+      "proficiency_bonus_table": [
+        {
+          "level": 1,
+          "bonus": 2
+        },
+        {
+          "level": 2,
+          "bonus": 2
+        },
+        {
+          "level": 3,
+          "bonus": 2
+        },
+        {
+          "level": 4,
+          "bonus": 2
+        },
+        {
+          "level": 5,
+          "bonus": 3
+        },
+        {
+          "level": 6,
+          "bonus": 3
+        },
+        {
+          "level": 7,
+          "bonus": 3
+        },
+        {
+          "level": 8,
+          "bonus": 3
+        },
+        {
+          "level": 9,
+          "bonus": 4
+        },
+        {
+          "level": 10,
+          "bonus": 4
+        },
+        {
+          "level": 11,
+          "bonus": 4
+        },
+        {
+          "level": 12,
+          "bonus": 4
+        },
+        {
+          "level": 13,
+          "bonus": 5
+        },
+        {
+          "level": 14,
+          "bonus": 5
+        },
+        {
+          "level": 15,
+          "bonus": 5
+        },
+        {
+          "level": 16,
+          "bonus": 5
+        },
+        {
+          "level": 17,
+          "bonus": 6
+        },
+        {
+          "level": 18,
+          "bonus": 6
+        },
+        {
+          "level": 19,
+          "bonus": 6
+        },
+        {
+          "level": 20,
+          "bonus": 6
+        }
+      ]
+    },
+    {
+      "id": "int",
+      "display_name": "Intelligence",
+      "stat_id": "int",
+      "modifier_formula": "div2_floor_minus_5",
+      "proficiency_bonus_table": [
+        {
+          "level": 1,
+          "bonus": 2
+        },
+        {
+          "level": 2,
+          "bonus": 2
+        },
+        {
+          "level": 3,
+          "bonus": 2
+        },
+        {
+          "level": 4,
+          "bonus": 2
+        },
+        {
+          "level": 5,
+          "bonus": 3
+        },
+        {
+          "level": 6,
+          "bonus": 3
+        },
+        {
+          "level": 7,
+          "bonus": 3
+        },
+        {
+          "level": 8,
+          "bonus": 3
+        },
+        {
+          "level": 9,
+          "bonus": 4
+        },
+        {
+          "level": 10,
+          "bonus": 4
+        },
+        {
+          "level": 11,
+          "bonus": 4
+        },
+        {
+          "level": 12,
+          "bonus": 4
+        },
+        {
+          "level": 13,
+          "bonus": 5
+        },
+        {
+          "level": 14,
+          "bonus": 5
+        },
+        {
+          "level": 15,
+          "bonus": 5
+        },
+        {
+          "level": 16,
+          "bonus": 5
+        },
+        {
+          "level": 17,
+          "bonus": 6
+        },
+        {
+          "level": 18,
+          "bonus": 6
+        },
+        {
+          "level": 19,
+          "bonus": 6
+        },
+        {
+          "level": 20,
+          "bonus": 6
+        }
+      ]
+    },
+    {
+      "id": "wis",
+      "display_name": "Wisdom",
+      "stat_id": "wis",
+      "modifier_formula": "div2_floor_minus_5",
+      "proficiency_bonus_table": [
+        {
+          "level": 1,
+          "bonus": 2
+        },
+        {
+          "level": 2,
+          "bonus": 2
+        },
+        {
+          "level": 3,
+          "bonus": 2
+        },
+        {
+          "level": 4,
+          "bonus": 2
+        },
+        {
+          "level": 5,
+          "bonus": 3
+        },
+        {
+          "level": 6,
+          "bonus": 3
+        },
+        {
+          "level": 7,
+          "bonus": 3
+        },
+        {
+          "level": 8,
+          "bonus": 3
+        },
+        {
+          "level": 9,
+          "bonus": 4
+        },
+        {
+          "level": 10,
+          "bonus": 4
+        },
+        {
+          "level": 11,
+          "bonus": 4
+        },
+        {
+          "level": 12,
+          "bonus": 4
+        },
+        {
+          "level": 13,
+          "bonus": 5
+        },
+        {
+          "level": 14,
+          "bonus": 5
+        },
+        {
+          "level": 15,
+          "bonus": 5
+        },
+        {
+          "level": 16,
+          "bonus": 5
+        },
+        {
+          "level": 17,
+          "bonus": 6
+        },
+        {
+          "level": 18,
+          "bonus": 6
+        },
+        {
+          "level": 19,
+          "bonus": 6
+        },
+        {
+          "level": 20,
+          "bonus": 6
+        }
+      ]
+    },
+    {
+      "id": "cha",
+      "display_name": "Charisma",
+      "stat_id": "cha",
+      "modifier_formula": "div2_floor_minus_5",
+      "proficiency_bonus_table": [
+        {
+          "level": 1,
+          "bonus": 2
+        },
+        {
+          "level": 2,
+          "bonus": 2
+        },
+        {
+          "level": 3,
+          "bonus": 2
+        },
+        {
+          "level": 4,
+          "bonus": 2
+        },
+        {
+          "level": 5,
+          "bonus": 3
+        },
+        {
+          "level": 6,
+          "bonus": 3
+        },
+        {
+          "level": 7,
+          "bonus": 3
+        },
+        {
+          "level": 8,
+          "bonus": 3
+        },
+        {
+          "level": 9,
+          "bonus": 4
+        },
+        {
+          "level": 10,
+          "bonus": 4
+        },
+        {
+          "level": 11,
+          "bonus": 4
+        },
+        {
+          "level": 12,
+          "bonus": 4
+        },
+        {
+          "level": 13,
+          "bonus": 5
+        },
+        {
+          "level": 14,
+          "bonus": 5
+        },
+        {
+          "level": 15,
+          "bonus": 5
+        },
+        {
+          "level": 16,
+          "bonus": 5
+        },
+        {
+          "level": 17,
+          "bonus": 6
+        },
+        {
+          "level": 18,
+          "bonus": 6
+        },
+        {
+          "level": 19,
+          "bonus": 6
+        },
+        {
+          "level": 20,
+          "bonus": 6
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "hp",
+      "display_name": "HP",
+      "default_maximum": 10,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "long_rest",
+          "amount": "Full"
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "hit_dice",
+      "display_name": "Hit Dice",
+      "default_maximum": 1,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "long_rest",
+          "amount": {
+            "Fraction": {
+              "numerator": 1,
+              "denominator": 2
+            }
+          }
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "spell_slots_1",
+      "display_name": "Spell Slots 1",
+      "default_maximum": 0,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "long_rest",
+          "amount": "Full"
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "spell_slots_2",
+      "display_name": "Spell Slots 2",
+      "default_maximum": 0,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "long_rest",
+          "amount": "Full"
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "spell_slots_3",
+      "display_name": "Spell Slots 3",
+      "default_maximum": 0,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "long_rest",
+          "amount": "Full"
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "xp",
+      "display_name": "XP",
+      "default_maximum": 999999,
+      "recovery": "Manual",
+      "tags": []
+    },
+    {
+      "id": "action_surge",
+      "display_name": "Action Surge",
+      "default_maximum": 0,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "short_rest",
+          "amount": "Full"
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "second_wind",
+      "display_name": "Second Wind",
+      "default_maximum": 0,
+      "recovery": {
+        "OnRest": {
+          "rest_kind": "short_rest",
+          "amount": "Full"
+        }
+      },
+      "tags": []
+    }
+  ],
+  "clocks": [
+    {
+      "id": "round",
+      "display_name": "Round",
+      "unit": "round"
+    },
+    {
+      "id": "minute",
+      "display_name": "Minute",
+      "unit": "minute"
+    },
+    {
+      "id": "hour",
+      "display_name": "Hour",
+      "unit": "hour"
+    },
+    {
+      "id": "day",
+      "display_name": "Day",
+      "unit": "day"
+    }
+  ],
+  "rests": [
+    {
+      "id": "short_rest",
+      "display_name": "Short Rest",
+      "duration": {
+        "Hours": 1
+      },
+      "tags": [
+        "short",
+        "interruptible"
+      ]
+    },
+    {
+      "id": "long_rest",
+      "display_name": "Long Rest",
+      "duration": {
+        "Hours": 8
+      },
+      "tags": [
+        "long",
+        "heals",
+        "recovers_slots",
+        "recovers_hit_dice",
+        "advances_day"
+      ]
+    }
+  ],
+  "damage_types": [
+    {
+      "id": "slashing",
+      "display_name": "Slashing",
+      "category": "physical",
+      "tags": []
+    },
+    {
+      "id": "piercing",
+      "display_name": "Piercing",
+      "category": "physical",
+      "tags": []
+    },
+    {
+      "id": "bludgeoning",
+      "display_name": "Bludgeoning",
+      "category": "physical",
+      "tags": []
+    },
+    {
+      "id": "fire",
+      "display_name": "Fire",
+      "category": "elemental",
+      "tags": []
+    },
+    {
+      "id": "cold",
+      "display_name": "Cold",
+      "category": "elemental",
+      "tags": []
+    },
+    {
+      "id": "lightning",
+      "display_name": "Lightning",
+      "category": "elemental",
+      "tags": []
+    },
+    {
+      "id": "thunder",
+      "display_name": "Thunder",
+      "category": "elemental",
+      "tags": []
+    },
+    {
+      "id": "poison",
+      "display_name": "Poison",
+      "category": "elemental",
+      "tags": []
+    },
+    {
+      "id": "acid",
+      "display_name": "Acid",
+      "category": "elemental",
+      "tags": []
+    },
+    {
+      "id": "necrotic",
+      "display_name": "Necrotic",
+      "category": "magical",
+      "tags": []
+    },
+    {
+      "id": "radiant",
+      "display_name": "Radiant",
+      "category": "magical",
+      "tags": []
+    },
+    {
+      "id": "force",
+      "display_name": "Force",
+      "category": "magical",
+      "tags": []
+    },
+    {
+      "id": "psychic",
+      "display_name": "Psychic",
+      "category": "psychic",
+      "tags": []
+    }
+  ],
+  "conditions": [
+    {
+      "id": "blinded",
+      "display_name": "Blinded",
+      "description": "Cannot see. Attack rolls against have advantage, own attacks have disadvantage.",
+      "persistent_effect_template": "cond.blinded",
+      "stackable": false,
+      "tags": []
+    },
+    {
+      "id": "charmed",
+      "display_name": "Charmed",
+      "description": "Cannot attack the charmer. Charmer has advantage on social checks.",
+      "persistent_effect_template": "cond.charmed",
+      "stackable": false,
+      "tags": []
+    },
+    {
+      "id": "deafened",
+      "display_name": "Deafened",
+      "description": "Cannot hear. Automatically fails hearing-based checks.",
+      "persistent_effect_template": "cond.deafened",
+      "stackable": false,
+      "tags": []
+    },
+    {
+      "id": "frightened",
+      "display_name": "Frightened",
+      "description": "Disadvantage on checks and attacks while source is visible.",
+      "persistent_effect_template": "cond.frightened",
+      "stackable": false,
+      "tags": []
+    },
+    {
+      "id": "grappled",
+      "display_name": "Grappled",
+      "description": "Speed becomes 0.",
+      "persistent_effect_template": "cond.grappled",
+      "stackable": false,
+      "tags": []
+    },
+    {
+      "id": "incapacitated",
+      "display_name": "Incapacitated",
+      "description": "Cannot take actions or reactions.",
+      "persistent_effect_template": "cond.incapacitated",
+      "stackable": false,
+      "tags": []
+    },
+    {
+      "id": "poisoned",
+      "display_name": "Poisoned",
+      "description": "Disadvantage on attack rolls and ability checks.",
+      "persistent_effect_template": "cond.poisoned",
+      "stackable": false,
+      "tags": []
+    },
+    {
+      "id": "stunned",
+      "display_name": "Stunned",
+      "description": "Incapacitated, cannot move, fails STR/DEX saves.",
+      "persistent_effect_template": "cond.stunned",
+      "stackable": false,
+      "tags": []
+    }
+  ],
+  "items": [
+    {
+      "id": "longsword",
+      "display_name": "Longsword",
+      "category": "weapon",
+      "slot": "main_hand",
+      "damage": [
+        {
+          "expression": "1d8",
+          "type": "slashing"
+        }
+      ],
+      "weight": 3,
+      "value": 15,
+      "tags": [
+        "martial",
+        "versatile"
+      ]
+    },
+    {
+      "id": "shortsword",
+      "display_name": "Shortsword",
+      "category": "weapon",
+      "slot": "main_hand",
+      "damage": [
+        {
+          "expression": "1d6",
+          "type": "piercing"
+        }
+      ],
+      "weight": 2,
+      "value": 10,
+      "tags": [
+        "martial",
+        "finesse",
+        "light"
+      ]
+    },
+    {
+      "id": "longbow",
+      "display_name": "Longbow",
+      "category": "weapon",
+      "slot": "main_hand",
+      "damage": [
+        {
+          "expression": "1d8",
+          "type": "piercing"
+        }
+      ],
+      "weight": 2,
+      "value": 50,
+      "range": {
+        "normal": 150,
+        "long": 600
+      },
+      "tags": [
+        "martial",
+        "two_handed",
+        "heavy"
+      ]
+    },
+    {
+      "id": "shortbow",
+      "display_name": "Shortbow",
+      "category": "weapon",
+      "slot": "main_hand",
+      "damage": [
+        {
+          "expression": "1d6",
+          "type": "piercing"
+        }
+      ],
+      "weight": 2,
+      "value": 25,
+      "range": {
+        "normal": 80,
+        "long": 320
+      },
+      "tags": [
+        "simple",
+        "two_handed"
+      ]
+    },
+    {
+      "id": "handaxe",
+      "display_name": "Handaxe",
+      "category": "weapon",
+      "slot": "main_hand",
+      "damage": [
+        {
+          "expression": "1d6",
+          "type": "slashing"
+        }
+      ],
+      "weight": 2,
+      "value": 5,
+      "range": {
+        "normal": 20,
+        "long": 60
+      },
+      "tags": [
+        "simple",
+        "light",
+        "thrown"
+      ]
+    },
+    {
+      "id": "chain_mail",
+      "display_name": "Chain Mail",
+      "category": "armor",
+      "slot": "armor",
+      "armor_class_formula": "16",
+      "weight": 55,
+      "value": 75,
+      "tags": [
+        "heavy"
+      ]
+    },
+    {
+      "id": "leather_armor",
+      "display_name": "Leather Armor",
+      "category": "armor",
+      "slot": "armor",
+      "armor_class_formula": "11+dex",
+      "weight": 10,
+      "value": 10,
+      "tags": [
+        "light"
+      ]
+    },
+    {
+      "id": "shield",
+      "display_name": "Shield",
+      "category": "shield",
+      "slot": "off_hand",
+      "armor_class_formula": "+2",
+      "weight": 6,
+      "value": 10,
+      "tags": []
+    },
+    {
+      "id": "potion_of_healing",
+      "display_name": "Potion of Healing",
+      "category": "consumable",
+      "weight": 0,
+      "value": 50,
+      "grants_actions": [
+        "use_potion_healing"
+      ],
+      "tags": [
+        "consumable",
+        "magical"
+      ]
+    },
+    {
+      "id": "torch",
+      "display_name": "Torch",
+      "category": "mundane",
+      "weight": 1,
+      "value": 0,
+      "tags": [
+        "light_source"
+      ]
+    }
+  ],
+  "classes": [
+    {
+      "id": "fighter",
+      "display_name": "Fighter",
+      "hit_die": {
+        "Dn": 10
+      },
+      "primary_ability": "str",
+      "saving_throw_proficiencies": [
+        "str",
+        "con"
+      ],
+      "armor_proficiencies": [
+        "light_armor",
+        "medium_armor",
+        "heavy_armor",
+        "shields"
+      ],
+      "weapon_proficiencies": [
+        "simple_weapons",
+        "martial_weapons"
+      ],
+      "skill_choices": {
+        "pick": 2,
+        "from": [
+          "acrobatics",
+          "athletics",
+          "intimidation",
+          "perception",
+          "insight",
+          "stealth"
+        ]
+      },
+      "starting_equipment": [
+        "chain_mail",
+        "longsword",
+        "shield",
+        "handaxe"
+      ],
+      "features": [
+        {
+          "id": "fighting_style",
+          "display_name": "Fighting Style",
+          "level": 1,
+          "grants_actions": [],
+          "grants_triggers": [],
+          "grants_transformers": [],
+          "grants_resources": [],
+          "grants_proficiencies": []
+        },
+        {
+          "id": "second_wind",
+          "display_name": "Second Wind",
+          "level": 1,
+          "grants_actions": [
+            "second_wind"
+          ],
+          "grants_triggers": [],
+          "grants_transformers": [],
+          "grants_resources": [
+            "second_wind"
+          ],
+          "grants_proficiencies": []
+        },
+        {
+          "id": "action_surge",
+          "display_name": "Action Surge",
+          "level": 2,
+          "grants_actions": [
+            "action_surge"
+          ],
+          "grants_triggers": [],
+          "grants_transformers": [],
+          "grants_resources": [
+            "action_surge"
+          ],
+          "grants_proficiencies": []
+        },
+        {
+          "id": "extra_attack",
+          "display_name": "Extra Attack",
+          "level": 5,
+          "grants_actions": [],
+          "grants_triggers": [
+            "extra_attack_trigger"
+          ],
+          "grants_transformers": [],
+          "grants_resources": [],
+          "grants_proficiencies": []
+        }
+      ],
+      "level_up_steps": [
+        {
+          "id": "hp_increase",
+          "prompt_kind": "ChooseHpMethod",
+          "legal_choices_fn": "sfs.roll.hit_die",
+          "apply_fn": "sfs.resource.set_max"
+        },
+        {
+          "id": "asi_or_feat",
+          "prompt_kind": "ChooseASI",
+          "legal_choices_fn": "sfs.progression.check",
+          "apply_fn": "sfs.progression.apply_level",
+          "at_levels": [
+            4,
+            6,
+            8,
+            12,
+            14,
+            16,
+            19
+          ]
+        }
+      ],
+      "tags": [
+        "martial"
+      ]
+    }
+  ],
+  "races": [
+    {
+      "id": "human",
+      "display_name": "Human",
+      "size": "Medium",
+      "speed": 30,
+      "ability_score_increases": {
+        "str": 1,
+        "dex": 1,
+        "con": 1,
+        "int": 1,
+        "wis": 1,
+        "cha": 1
+      },
+      "languages": [
+        "common",
+        "choice"
+      ],
+      "traits": [
+        {
+          "id": "versatile",
+          "display_name": "Versatile",
+          "grants_proficiencies": [
+            "any_skill"
+          ]
+        }
+      ],
+      "tags": []
+    }
+  ],
+  "backgrounds": [
+    {
+      "id": "soldier",
+      "display_name": "Soldier",
+      "skill_proficiencies": [
+        "athletics",
+        "intimidation"
+      ],
+      "tool_proficiencies": [
+        "gaming_set",
+        "vehicles_land"
+      ],
+      "starting_equipment": [
+        "handaxe"
+      ],
+      "tags": []
+    }
+  ],
+  "feats": [
+    {
+      "id": "great_weapon_master",
+      "display_name": "Great Weapon Master",
+      "description": "Take -5 to attack for +10 damage with heavy weapons.",
+      "prerequisites": [],
+      "grants_triggers": [
+        "gwm_bonus_attack"
+      ],
+      "tags": [
+        "combat"
+      ]
+    }
+  ],
+  "spells": [
+    {
+      "id": "fire_bolt",
+      "display_name": "Fire Bolt",
+      "level": 0,
+      "school": "evocation",
+      "casting_time": "Action",
+      "range": {
+        "Feet": 120
+      },
+      "components": {
+        "verbal": true,
+        "somatic": true,
+        "material": null,
+        "consumed": false
+      },
+      "duration": {
+        "Rounds": 0
+      },
+      "concentration": false,
+      "ritual": false,
+      "effects": [
+        "fire_bolt_damage"
+      ],
+      "attack_type": "ranged",
+      "classes": [
+        "fighter"
+      ],
+      "tags": [
+        "cantrip",
+        "damage"
+      ]
+    },
+    {
+      "id": "burning_hands",
+      "display_name": "Burning Hands",
+      "level": 1,
+      "school": "evocation",
+      "casting_time": "Action",
+      "range": "Self",
+      "components": {
+        "verbal": true,
+        "somatic": true,
+        "material": null,
+        "consumed": false
+      },
+      "duration": {
+        "Rounds": 0
+      },
+      "concentration": false,
+      "ritual": false,
+      "effects": [
+        "burning_hands_damage"
+      ],
+      "save": "dex_save",
+      "area": {
+        "shape": "cone",
+        "size": 15
+      },
+      "classes": [
+        "fighter"
+      ],
+      "tags": [
+        "damage",
+        "aoe"
+      ]
+    },
+    {
+      "id": "shield",
+      "display_name": "Shield",
+      "level": 1,
+      "school": "abjuration",
+      "casting_time": "Reaction",
+      "range": "Self",
+      "components": {
+        "verbal": true,
+        "somatic": true,
+        "material": null,
+        "consumed": false
+      },
+      "duration": {
+        "Rounds": 1
+      },
+      "concentration": false,
+      "ritual": false,
+      "effects": [
+        "shield_ac_bonus"
+      ],
+      "classes": [
+        "fighter"
+      ],
+      "tags": [
+        "defense"
+      ]
+    },
+    {
+      "id": "cure_wounds",
+      "display_name": "Cure Wounds",
+      "level": 1,
+      "school": "evocation",
+      "casting_time": "Action",
+      "range": "Touch",
+      "components": {
+        "verbal": true,
+        "somatic": true,
+        "material": null,
+        "consumed": false
+      },
+      "duration": {
+        "Rounds": 0
+      },
+      "concentration": false,
+      "ritual": false,
+      "effects": [
+        "cure_wounds_heal"
+      ],
+      "scaling": {
+        "mode": "per_slot_above_base",
+        "base_level": 1,
+        "per_level_extra": [
+          {
+            "expression": "1d8",
+            "type": "radiant"
+          }
+        ]
+      },
+      "classes": [
+        "fighter"
+      ],
+      "tags": [
+        "healing"
+      ]
+    },
+    {
+      "id": "fireball",
+      "display_name": "Fireball",
+      "level": 3,
+      "school": "evocation",
+      "casting_time": "Action",
+      "range": {
+        "Feet": 150
+      },
+      "components": {
+        "verbal": true,
+        "somatic": true,
+        "material": "a tiny ball of bat guano and sulfur",
+        "material_cost_gp": 0,
+        "consumed": true
+      },
+      "duration": {
+        "Rounds": 0
+      },
+      "concentration": false,
+      "ritual": false,
+      "effects": [
+        "fireball_damage"
+      ],
+      "save": "dex_save",
+      "area": {
+        "shape": "sphere",
+        "size": 20
+      },
+      "scaling": {
+        "mode": "per_slot_above_base",
+        "base_level": 3,
+        "per_level_extra": [
+          {
+            "expression": "1d6",
+            "type": "fire"
+          }
+        ]
+      },
+      "classes": [
+        "fighter"
+      ],
+      "tags": [
+        "damage",
+        "aoe"
+      ]
+    }
+  ],
+  "bestiary": [
+    {
+      "id": "goblin",
+      "display_name": "Goblin",
+      "size": "Small",
+      "type": "humanoid",
+      "alignment": "neutral evil",
+      "stats": {
+        "str": 8,
+        "dex": 14,
+        "con": 10,
+        "int": 10,
+        "wis": 8,
+        "cha": 8
+      },
+      "hit_points": {
+        "average": 7,
+        "formula": "2d6"
+      },
+      "armor_class": {
+        "value": 15,
+        "type": "leather armor, shield"
+      },
+      "speed": {
+        "walk": 30
+      },
+      "skills": {
+        "stealth": 6
+      },
+      "senses": {
+        "darkvision": 60
+      },
+      "languages": [
+        "common",
+        "goblin"
+      ],
+      "challenge_rating": 0.25,
+      "xp": 50,
+      "actions": [
+        "attack_melee",
+        "attack_ranged"
+      ],
+      "traits": [
+        {
+          "id": "nimble_escape",
+          "display_name": "Nimble Escape",
+          "level": 1
+        }
+      ],
+      "tags": [
+        "goblinoid"
+      ]
+    },
+    {
+      "id": "goblin_boss",
+      "display_name": "Goblin Boss",
+      "size": "Small",
+      "type": "humanoid",
+      "alignment": "neutral evil",
+      "stats": {
+        "str": 10,
+        "dex": 14,
+        "con": 10,
+        "int": 10,
+        "wis": 8,
+        "cha": 10
+      },
+      "hit_points": {
+        "average": 21,
+        "formula": "6d6"
+      },
+      "armor_class": {
+        "value": 17,
+        "type": "chain shirt, shield"
+      },
+      "speed": {
+        "walk": 30
+      },
+      "skills": {
+        "stealth": 6,
+        "intimidation": 2
+      },
+      "senses": {
+        "darkvision": 60
+      },
+      "languages": [
+        "common",
+        "goblin"
+      ],
+      "challenge_rating": 1,
+      "xp": 200,
+      "actions": [
+        "attack_melee",
+        "attack_ranged"
+      ],
+      "traits": [
+        {
+          "id": "nimble_escape",
+          "display_name": "Nimble Escape",
+          "level": 1
+        },
+        {
+          "id": "redirect_attack",
+          "display_name": "Redirect Attack",
+          "level": 1
+        }
+      ],
+      "tags": [
+        "goblinoid",
+        "leader"
+      ]
+    },
+    {
+      "id": "hobgoblin",
+      "display_name": "Hobgoblin",
+      "size": "Medium",
+      "type": "humanoid",
+      "alignment": "lawful evil",
+      "stats": {
+        "str": 13,
+        "dex": 12,
+        "con": 12,
+        "int": 10,
+        "wis": 10,
+        "cha": 9
+      },
+      "hit_points": {
+        "average": 11,
+        "formula": "2d8+2"
+      },
+      "armor_class": {
+        "value": 18,
+        "type": "chain mail, shield"
+      },
+      "speed": {
+        "walk": 30
+      },
+      "senses": {
+        "darkvision": 60
+      },
+      "languages": [
+        "common",
+        "goblin"
+      ],
+      "challenge_rating": 0.5,
+      "xp": 100,
+      "actions": [
+        "attack_melee",
+        "attack_ranged"
+      ],
+      "traits": [
+        {
+          "id": "martial_advantage",
+          "display_name": "Martial Advantage",
+          "level": 1
+        }
+      ],
+      "tags": [
+        "goblinoid"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "attack_melee",
+      "display_name": "Melee Attack",
+      "kind": "Action",
+      "prerequisites": [],
+      "cost": [],
+      "targeting": {
+        "kind": "SingleEntity",
+        "range": 5,
+        "must_be_hostile": true
+      },
+      "effects": [
+        "melee_damage"
+      ],
+      "tags": [
+        "attack",
+        "melee"
+      ]
+    },
+    {
+      "id": "attack_ranged",
+      "display_name": "Ranged Attack",
+      "kind": "Action",
+      "prerequisites": [],
+      "cost": [],
+      "targeting": {
+        "kind": "SingleEntity",
+        "range": 80,
+        "must_be_hostile": true
+      },
+      "effects": [
+        "ranged_damage"
+      ],
+      "tags": [
+        "attack",
+        "ranged"
+      ]
+    },
+    {
+      "id": "dodge",
+      "display_name": "Dodge",
+      "kind": "Action",
+      "prerequisites": [],
+      "cost": [],
+      "targeting": {
+        "kind": "Self"
+      },
+      "effects": [],
+      "tags": [
+        "defense"
+      ]
+    },
+    {
+      "id": "dash",
+      "display_name": "Dash",
+      "kind": "Action",
+      "prerequisites": [],
+      "cost": [],
+      "targeting": {
+        "kind": "Self"
+      },
+      "effects": [],
+      "tags": [
+        "movement"
+      ]
+    },
+    {
+      "id": "disengage",
+      "display_name": "Disengage",
+      "kind": "Action",
+      "prerequisites": [],
+      "cost": [],
+      "targeting": {
+        "kind": "Self"
+      },
+      "effects": [],
+      "tags": [
+        "movement"
+      ]
+    },
+    {
+      "id": "help",
+      "display_name": "Help",
+      "kind": "Action",
+      "prerequisites": [],
+      "cost": [],
+      "targeting": {
+        "kind": "SingleEntity",
+        "range": 5
+      },
+      "effects": [],
+      "tags": [
+        "support"
+      ]
+    },
+    {
+      "id": "hide",
+      "display_name": "Hide",
+      "kind": "Action",
+      "prerequisites": [],
+      "cost": [],
+      "targeting": {
+        "kind": "Self"
+      },
+      "effects": [],
+      "tags": [
+        "stealth"
+      ]
+    },
+    {
+      "id": "use_item",
+      "display_name": "Use Item",
+      "kind": "Action",
+      "prerequisites": [],
+      "cost": [],
+      "targeting": {
+        "kind": "Self"
+      },
+      "effects": [],
+      "tags": [
+        "interaction"
+      ]
+    },
+    {
+      "id": "second_wind",
+      "display_name": "Second Wind",
+      "kind": "BonusAction",
+      "prerequisites": [
+        {
+          "HasResource": {
+            "id": "second_wind",
+            "amount": 1
+          }
+        }
+      ],
+      "cost": [
+        {
+          "resource": "second_wind",
+          "amount": 1
+        }
+      ],
+      "targeting": {
+        "kind": "Self"
+      },
+      "effects": [
+        "second_wind_heal"
+      ],
+      "tags": [
+        "healing",
+        "fighter"
+      ]
+    },
+    {
+      "id": "action_surge",
+      "display_name": "Action Surge",
+      "kind": "FreeAction",
+      "prerequisites": [
+        {
+          "HasResource": {
+            "id": "action_surge",
+            "amount": 1
+          }
+        }
+      ],
+      "cost": [
+        {
+          "resource": "action_surge",
+          "amount": 1
+        }
+      ],
+      "targeting": {
+        "kind": "Self"
+      },
+      "effects": [],
+      "tags": [
+        "fighter"
+      ]
+    },
+    {
+      "id": "cast_spell",
+      "display_name": "Cast Spell",
+      "kind": "Action",
+      "prerequisites": [],
+      "cost": [],
+      "targeting": {
+        "kind": "SingleEntity",
+        "range": 120
+      },
+      "effects": [],
+      "adjudication": "AdjudicateOnAmbiguity",
+      "tags": [
+        "spell"
+      ]
+    },
+    {
+      "id": "end_turn",
+      "display_name": "End Turn",
+      "kind": "FreeAction",
+      "prerequisites": [],
+      "cost": [],
+      "targeting": {
+        "kind": "Self"
+      },
+      "effects": [],
+      "tags": [
+        "end_turn"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "athletics",
+      "display_name": "Athletics",
+      "ability": "str",
+      "tags": []
+    },
+    {
+      "id": "acrobatics",
+      "display_name": "Acrobatics",
+      "ability": "dex",
+      "tags": []
+    },
+    {
+      "id": "stealth",
+      "display_name": "Stealth",
+      "ability": "dex",
+      "tags": []
+    },
+    {
+      "id": "perception",
+      "display_name": "Perception",
+      "ability": "wis",
+      "tags": []
+    },
+    {
+      "id": "insight",
+      "display_name": "Insight",
+      "ability": "wis",
+      "tags": []
+    },
+    {
+      "id": "intimidation",
+      "display_name": "Intimidation",
+      "ability": "cha",
+      "tags": []
+    }
+  ],
+  "saves": [
+    {
+      "id": "str_save",
+      "display_name": "Strength Save",
+      "ability": "str",
+      "tags": []
+    },
+    {
+      "id": "dex_save",
+      "display_name": "Dexterity Save",
+      "ability": "dex",
+      "tags": []
+    },
+    {
+      "id": "con_save",
+      "display_name": "Constitution Save",
+      "ability": "con",
+      "tags": []
+    },
+    {
+      "id": "int_save",
+      "display_name": "Intelligence Save",
+      "ability": "int",
+      "tags": []
+    },
+    {
+      "id": "wis_save",
+      "display_name": "Wisdom Save",
+      "ability": "wis",
+      "tags": []
+    },
+    {
+      "id": "cha_save",
+      "display_name": "Charisma Save",
+      "ability": "cha",
+      "tags": []
+    }
+  ],
+  "triggers": [
+    {
+      "id": "opportunity_attack",
+      "owner_scope": "Entity",
+      "on": {
+        "OnActionDeclared": {
+          "action_filter": {
+            "Tagged": {
+              "path": "tags",
+              "tag": "movement"
+            }
+          }
+        }
+      },
+      "effect_template": "melee_damage",
+      "priority": 100,
+      "one_shot": false,
+      "reaction": true
+    },
+    {
+      "id": "second_wind_trigger",
+      "owner_scope": "Entity",
+      "on": {
+        "OnEvent": {
+          "kind": "ResourceChanged",
+          "filter": {
+            "Eq": {
+              "path": "resource",
+              "value": "second_wind"
+            }
+          }
+        }
+      },
+      "effect_template": "second_wind_heal",
+      "priority": 50,
+      "one_shot": false,
+      "reaction": false
+    },
+    {
+      "id": "concentration_check",
+      "owner_scope": "Entity",
+      "on": {
+        "OnDamaged": {
+          "target": {
+            "Has": {
+              "path": "concentration"
+            }
+          },
+          "damage_filter": {
+            "Gt": {
+              "path": "amount",
+              "value": 0
+            }
+          }
+        }
+      },
+      "effect_template": "melee_damage",
+      "priority": 200,
+      "one_shot": false,
+      "reaction": false
+    }
+  ],
+  "transformers": [
+    {
+      "id": "resistance_fire",
+      "phase": "PreResolve",
+      "applies_to": {
+        "Eq": {
+          "path": "body.amounts.0.type",
+          "value": "fire"
+        }
+      },
+      "transform": {
+        "ScaleNumeric": {
+          "field": "body.amounts.0.amount",
+          "numerator": 1,
+          "denominator": 2
+        }
+      },
+      "source": "Feature",
+      "priority": 100
+    },
+    {
+      "id": "vulnerability_fire",
+      "phase": "PreResolve",
+      "applies_to": {
+        "Eq": {
+          "path": "body.amounts.0.type",
+          "value": "fire"
+        }
+      },
+      "transform": {
+        "ScaleNumeric": {
+          "field": "body.amounts.0.amount",
+          "numerator": 2,
+          "denominator": 1
+        }
+      },
+      "source": "Feature",
+      "priority": 110
+    },
+    {
+      "id": "immunity_poison",
+      "phase": "PreResolve",
+      "applies_to": {
+        "Eq": {
+          "path": "body.amounts.0.type",
+          "value": "poison"
+        }
+      },
+      "transform": {
+        "SetField": {
+          "field": "body.amounts.0.amount",
+          "value": 0
+        }
+      },
+      "source": "Feature",
+      "priority": 90
+    }
+  ],
+  "effect_templates": [
+    {
+      "id": "melee_damage",
+      "display_name": "Melee Damage",
+      "body": {
+        "Damage": {
+          "amounts": [
+            {
+              "expression": "1d8",
+              "type": "slashing"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ranged_damage",
+      "display_name": "Ranged Damage",
+      "body": {
+        "Damage": {
+          "amounts": [
+            {
+              "expression": "1d8",
+              "type": "piercing"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "fire_bolt_damage",
+      "display_name": "Fire Bolt",
+      "body": {
+        "Damage": {
+          "amounts": [
+            {
+              "expression": "1d10",
+              "type": "fire"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "burning_hands_damage",
+      "display_name": "Burning Hands",
+      "body": {
+        "Damage": {
+          "amounts": [
+            {
+              "expression": "3d6",
+              "type": "fire"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "fireball_damage",
+      "display_name": "Fireball",
+      "body": {
+        "Damage": {
+          "amounts": [
+            {
+              "expression": "8d6",
+              "type": "fire"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "cure_wounds_heal",
+      "display_name": "Cure Wounds",
+      "body": {
+        "Heal": {
+          "amount": {
+            "expression": "1d8"
+          }
+        }
+      }
+    },
+    {
+      "id": "shield_ac_bonus",
+      "display_name": "Shield AC Bonus",
+      "body": {
+        "ApplyPersistent": {
+          "template": "shield_spell_effect",
+          "duration": {
+            "Rounds": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "second_wind_heal",
+      "display_name": "Second Wind",
+      "body": {
+        "Heal": {
+          "amount": {
+            "expression": "1d10"
+          }
+        }
+      }
+    }
+  ],
+  "persistent_effect_templates": [
+    {
+      "id": "cond.blinded",
+      "display_name": "Blinded",
+      "tags": [],
+      "default_duration": "UntilDispelled"
+    },
+    {
+      "id": "cond.charmed",
+      "display_name": "Charmed",
+      "tags": [],
+      "default_duration": "UntilDispelled"
+    },
+    {
+      "id": "cond.deafened",
+      "display_name": "Deafened",
+      "tags": [],
+      "default_duration": "UntilDispelled"
+    },
+    {
+      "id": "cond.frightened",
+      "display_name": "Frightened",
+      "tags": [],
+      "default_duration": "UntilDispelled"
+    },
+    {
+      "id": "cond.grappled",
+      "display_name": "Grappled",
+      "tags": [],
+      "default_duration": "UntilDispelled"
+    },
+    {
+      "id": "cond.incapacitated",
+      "display_name": "Incapacitated",
+      "tags": [],
+      "default_duration": "UntilDispelled"
+    },
+    {
+      "id": "cond.poisoned",
+      "display_name": "Poisoned",
+      "tags": [],
+      "default_duration": "UntilDispelled"
+    },
+    {
+      "id": "cond.stunned",
+      "display_name": "Stunned",
+      "tags": [],
+      "default_duration": "UntilDispelled"
+    },
+    {
+      "id": "concentration_spell",
+      "display_name": "Concentration Spell",
+      "tags": [],
+      "default_duration": "UntilDispelled",
+      "concentration": true,
+      "concentration_break_rule": {
+        "break_on_damage": true,
+        "break_on_incapacitate": true,
+        "break_on_new_concentration": true,
+        "save": {
+          "save_id": "con_save",
+          "dc_formula": "max(10, damage/2)"
+        }
+      }
+    },
+    {
+      "id": "shield_spell_effect",
+      "display_name": "Shield Spell Effect",
+      "tags": [],
+      "default_duration": {
+        "Rounds": 1
+      },
+      "grants_transformers": [
+        "shield_ac_transformer"
+      ]
+    }
+  ],
+  "progression": {
+    "xp_table": [
+      {
+        "level": 1,
+        "xp_threshold": 0
+      },
+      {
+        "level": 2,
+        "xp_threshold": 300
+      },
+      {
+        "level": 3,
+        "xp_threshold": 900
+      },
+      {
+        "level": 4,
+        "xp_threshold": 2700
+      },
+      {
+        "level": 5,
+        "xp_threshold": 6500
+      },
+      {
+        "level": 6,
+        "xp_threshold": 14000
+      },
+      {
+        "level": 7,
+        "xp_threshold": 23000
+      },
+      {
+        "level": 8,
+        "xp_threshold": 34000
+      },
+      {
+        "level": 9,
+        "xp_threshold": 48000
+      },
+      {
+        "level": 10,
+        "xp_threshold": 64000
+      },
+      {
+        "level": 11,
+        "xp_threshold": 85000
+      },
+      {
+        "level": 12,
+        "xp_threshold": 100000
+      },
+      {
+        "level": 13,
+        "xp_threshold": 120000
+      },
+      {
+        "level": 14,
+        "xp_threshold": 140000
+      },
+      {
+        "level": 15,
+        "xp_threshold": 165000
+      },
+      {
+        "level": 16,
+        "xp_threshold": 195000
+      },
+      {
+        "level": 17,
+        "xp_threshold": 225000
+      },
+      {
+        "level": 18,
+        "xp_threshold": 265000
+      },
+      {
+        "level": 19,
+        "xp_threshold": 305000
+      },
+      {
+        "level": 20,
+        "xp_threshold": 355000
+      }
+    ],
+    "level_up_steps": {
+      "fighter": [
+        {
+          "id": "hp_increase",
+          "prompt_kind": "ChooseHpMethod",
+          "legal_choices_fn": "sfs.roll.hit_die",
+          "apply_fn": "sfs.resource.set_max"
+        },
+        {
+          "id": "asi_or_feat",
+          "prompt_kind": "ChooseASI",
+          "legal_choices_fn": "sfs.progression.check",
+          "apply_fn": "sfs.progression.apply_level",
+          "at_levels": [
+            4,
+            6,
+            8,
+            12,
+            14,
+            16,
+            19
+          ]
+        }
+      ]
+    },
+    "rest_types": [
+      "short_rest",
+      "long_rest"
+    ],
+    "death_rules": {
+      "trigger_at_hp": 0,
+      "massive_damage_threshold": "damage_minus_remaining_gte_max",
+      "successes_to_stabilize": 3,
+      "failures_to_die": 3,
+      "save_dc": 10,
+      "save_id": "con_save"
+    },
+    "exhaustion_rules": {
+      "max_level": 6,
+      "effects_per_level": [
+        {
+          "level": 1,
+          "transformers": [
+            "exhaustion_1"
+          ]
+        },
+        {
+          "level": 2,
+          "transformers": [
+            "exhaustion_2"
+          ]
+        },
+        {
+          "level": 3,
+          "transformers": [
+            "exhaustion_3"
+          ]
+        },
+        {
+          "level": 4,
+          "transformers": [
+            "exhaustion_4"
+          ]
+        },
+        {
+          "level": 5,
+          "transformers": [
+            "exhaustion_5"
+          ]
+        },
+        {
+          "level": 6,
+          "transformers": [
+            "exhaustion_6"
+          ]
+        }
+      ],
+      "death_at_max": true
+    }
+  },
+  "derived_stat_rules": [
+    {
+      "id": "armor_class",
+      "display_name": "Armor Class",
+      "formula": {
+        "Add": [
+          {
+            "Const": 10
+          },
+          {
+            "StatRef": "dex"
+          }
+        ]
+      }
+    },
+    {
+      "id": "initiative_bonus",
+      "display_name": "Initiative Bonus",
+      "formula": {
+        "StatRef": "dex"
+      }
+    },
+    {
+      "id": "passive_perception",
+      "display_name": "Passive Perception",
+      "formula": {
+        "Add": [
+          {
+            "Const": 10
+          },
+          {
+            "StatRef": "wis"
+          }
+        ]
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "tavern_brawl",
+      "display_name": "Tavern Brawl",
+      "zones": {
+        "zones": {
+          "bar": {
+            "id": "bar",
+            "display_name": "Bar Area",
+            "footprint": "Abstract",
+            "cover": "Half",
+            "difficult_terrain": false,
+            "tags": []
+          },
+          "tables": {
+            "id": "tables",
+            "display_name": "Table Area",
+            "footprint": "Abstract",
+            "cover": "Half",
+            "difficult_terrain": true,
+            "tags": []
+          },
+          "door": {
+            "id": "door",
+            "display_name": "Doorway",
+            "footprint": "Abstract",
+            "cover": "ThreeQuarters",
+            "difficult_terrain": false,
+            "tags": []
+          }
+        },
+        "adjacency": {
+          "bar": [
+            "tables"
+          ],
+          "tables": [
+            "bar",
+            "door"
+          ],
+          "door": [
+            "tables"
+          ]
+        }
+      },
+      "initial_mode": "Combat",
+      "initial_entities": []
+    }
+  ],
+  "tables": [
+    {
+      "id": "simple_loot",
+      "display_name": "Simple Loot Table",
+      "dice": "1d6",
+      "entries": [
+        {
+          "min": 1,
+          "max": 2,
+          "result": "Nothing"
+        },
+        {
+          "min": 3,
+          "max": 4,
+          "result": "1d6 gold pieces"
+        },
+        {
+          "min": 5,
+          "max": 5,
+          "result": "Potion of Healing"
+        },
+        {
+          "min": 6,
+          "max": 6,
+          "result": "Shortsword +1"
+        }
+      ]
+    }
+  ]
+}
